@@ -356,6 +356,17 @@ h1.rules-title {
   transform: translateY(-2px);
 }
 
+.rules-btn.games-btn {
+  animation-delay: 0.55s;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(240, 147, 251, 0.2));
+  border-color: rgba(240, 147, 251, 0.3);
+}
+
+.rules-btn.games-btn:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(240, 147, 251, 0.3));
+  border-color: rgba(240, 147, 251, 0.5);
+}
+
 /* ===== СЕКЦІЇ ПРАВИЛ ===== */
 .rules-section {
   background: rgba(255, 255, 255, 0.05);
@@ -436,6 +447,105 @@ h1.rules-title {
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== СТОРІНКА ІГОР ===== */
+.game-category {
+  margin-bottom: 30px;
+  animation: slideUp 0.6s ease-out both;
+}
+
+.game-category:nth-child(2) { animation-delay: 0.1s; }
+.game-category:nth-child(3) { animation-delay: 0.2s; }
+.game-category:nth-child(4) { animation-delay: 0.3s; }
+.game-category:nth-child(5) { animation-delay: 0.4s; }
+
+.category-title {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  padding-left: 12px;
+  border-left: 4px solid;
+}
+
+.category-title.category-mouse { color: #4facfe; border-color: #4facfe; }
+.category-title.category-keyboard { color: #43e97b; border-color: #43e97b; }
+.category-title.category-logic { color: #f093fb; border-color: #f093fb; }
+.category-title.category-external { color: #fa709a; border-color: #fa709a; }
+
+.games-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.game-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.game-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(5px);
+}
+
+.game-card.coming-soon {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.game-card-mouse:hover { border-color: rgba(79, 172, 254, 0.5); }
+.game-card-keyboard:hover { border-color: rgba(67, 233, 123, 0.5); }
+.game-card-logic:hover { border-color: rgba(240, 147, 251, 0.5); }
+.game-card-external:hover { border-color: rgba(250, 112, 154, 0.5); }
+
+.game-icon {
+  font-size: 2.2rem;
+  width: 50px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.game-info h3 {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.game-info p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+.coming-soon-badge,
+.external-badge {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.coming-soon-badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.external-badge {
+  background: rgba(250, 112, 154, 0.2);
+  color: #fa709a;
+  font-size: 1rem;
 }
 
 /* ===== ФУТЕР ===== */
