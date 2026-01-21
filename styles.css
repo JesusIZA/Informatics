@@ -357,7 +357,7 @@ h1.rules-title {
 }
 
 .rules-btn.games-btn {
-  margin-top: 50px;
+  margin-top: 40px;
   animation-delay: 0.55s;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(240, 147, 251, 0.2));
   border-color: rgba(240, 147, 251, 0.3);
