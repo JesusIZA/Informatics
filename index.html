@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Інформатика - Матеріали</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+    .classes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .class-btn {
+      display: block;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .class-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    }
+    .class-btn:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .class-btn:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .class-btn:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .class-btn:nth-child(5) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .class-btn:nth-child(6) { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
+    .class-btn:nth-child(7) { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #333; }
+    .class-btn:nth-child(8) { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.85rem;
+    }
+    @media (max-width: 400px) {
+      .classes { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📚 Інформатика</h1>
+    <p class="subtitle">Обери свій клас</p>
+    
+    <div class="classes">
+      <a href="https://drive.google.com/drive/folders/1f1FEbJ3cbP1qi-A7F2n8E99c0Yo9ZtJI" class="class-btn">5-В</a>
+      <a href="https://drive.google.com/drive/folders/12OZGYnciWE3gsHirJumZ68RW0LBq4GcL" class="class-btn">6-А</a>
+      <a href="https://drive.google.com/drive/folders/1B-L_4Tl0zbkw28WGNau3cEuvEMPdcm-8" class="class-btn">6-Б</a>
+      <a href="https://drive.google.com/drive/folders/1FQicnMNd_myibv3wauvAwRs4yxouGS0J" class="class-btn">6-В</a>
+      <a href="https://drive.google.com/drive/folders/1B7zZwtLn1WuS6LIJsbS-NEXDqM_tlYfg" class="class-btn">7-Б</a>
+      <a href="https://drive.google.com/drive/folders/1qkLDuxXHZky5X3BBcwo3UzD_wk5izZXk" class="class-btn">8-Г</a>
+      <a href="https://drive.google.com/drive/folders/1QeKR_-mCK4hXtC7bPvHuhtHTS_qttsRz" class="class-btn">9-Б</a>
+      <a href="https://drive.google.com/drive/folders/16Si2BXuuIWfA-NM4Te7IvBUgMzxqsDlr" class="class-btn">9-В</a>
+    </div>
+    
+    <p class="footer">Натисни на свій клас, щоб перейти до матеріалів</p>
+  </div>
+</body>
+</html>
