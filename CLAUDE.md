@@ -34,7 +34,11 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 │   │   ├── index.html
 │   │   ├── styles.css
 │   │   └── script.js
-│   └── memory-pairs/               # "Знайди пару" game
+│   ├── memory-pairs/               # "Знайди пару" game
+│   │   ├── index.html
+│   │   ├── styles.css
+│   │   └── script.js
+│   └── mouse-drag/                 # "Перетягни предмет" game
 │       ├── index.html
 │       ├── styles.css
 │       └── script.js
@@ -92,15 +96,28 @@ Contains all CSS styles organized in sections:
 ### Memory Pairs Game (`games/memory-pairs/`)
 - Classic memory card matching game
 - 3 difficulty levels with different grid sizes:
-  - Easy (3×4, 6 pairs, 90s)
-  - Medium (4×4, 8 pairs, 120s)
-  - Hard (4×5, 10 pairs, 150s)
+  - Easy (3×4, 6 pairs, 80s)
+  - Medium (4×4, 8 pairs, 100s)
+  - Hard (4×5, 10 pairs, 120s)
 - Card themes: animals, food, transport (emoji)
 - 3D flip animation for cards
 - Scoring: base points (10) + speed bonus (+5 if <3s) × combo multiplier
 - Combo system: 2+ streak = ×1.5, 3+ = ×2, 5+ = ×3
 - Time bonus for remaining seconds on win
 - High scores saved in localStorage (`memoryPairsRecords`)
+
+### Mouse Drag Game (`games/mouse-drag/`)
+- Drag and drop sorting game
+- 3 difficulty levels with different themes:
+  - Easy: Fruits vs Vegetables (2 categories, 12 items, 80s)
+  - Medium: Animals by habitat - Farm/Forest/Water (3 categories, 15 items, 100s)
+  - Hard: Seasons - Winter/Spring/Summer/Autumn (4 categories, 16 items, 120s)
+- Drag items to correct category zones
+- Touch support for mobile devices
+- Scoring: base points × combo multiplier + streak bonus
+- Combo system: 3+ streak = ×1.5, 5+ = ×2, 8+ = ×3
+- Time bonus for remaining seconds on win
+- High scores saved in localStorage (`mouseDragRecords`)
 
 ## Key Details
 
@@ -136,3 +153,4 @@ games/[game-name]/
 - `balloonGameRecords` - mouse click game records
 - `keyboardLettersRecords` - keyboard letters game records
 - `memoryPairsRecords` - memory pairs game records
+- `mouseDragRecords` - mouse drag game records
