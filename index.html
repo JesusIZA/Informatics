@@ -307,6 +307,12 @@
 
     // Завантажити коди при старті
     loadCodes();
+
+    // Скинути стан при поверненні на сторінку (кнопка "назад")
+    window.addEventListener('pageshow', () => {
+      successOverlay.classList.remove('active');
+      modal.classList.remove('active');
+    });
   </script>
 </body>
 </html>
