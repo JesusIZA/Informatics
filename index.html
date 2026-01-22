@@ -38,18 +38,220 @@
     <p class="subtitle">Обери свій клас</p>
 
     <div class="classes">
-      <a href="https://drive.google.com/drive/folders/1f1FEbJ3cbP1qi-A7F2n8E99c0Yo9ZtJI" class="class-btn">5-В</a>
-      <a href="https://drive.google.com/drive/folders/12OZGYnciWE3gsHirJumZ68RW0LBq4GcL" class="class-btn">6-А</a>
-      <a href="https://drive.google.com/drive/folders/1B-L_4Tl0zbkw28WGNau3cEuvEMPdcm-8" class="class-btn">6-Б</a>
-      <a href="https://drive.google.com/drive/folders/1FQicnMNd_myibv3wauvAwRs4yxouGS0J" class="class-btn">6-В</a>
-      <a href="https://drive.google.com/drive/folders/1B7zZwtLn1WuS6LIJsbS-NEXDqM_tlYfg" class="class-btn">7-Б</a>
-      <a href="https://drive.google.com/drive/folders/1qkLDuxXHZky5X3BBcwo3UzD_wk5izZXk" class="class-btn">8-Г</a>
-      <a href="https://drive.google.com/drive/folders/1QeKR_-mCK4hXtC7bPvHuhtHTS_qttsRz" class="class-btn">9-Б</a>
-      <a href="https://drive.google.com/drive/folders/16Si2BXuuIWfA-NM4Te7IvBUgMzxqsDlr" class="class-btn">9-В</a>
+      <a href="https://drive.google.com/drive/folders/1f1FEbJ3cbP1qi-A7F2n8E99c0Yo9ZtJI" class="class-btn" data-class="5-В">5-В</a>
+      <a href="https://drive.google.com/drive/folders/12OZGYnciWE3gsHirJumZ68RW0LBq4GcL" class="class-btn" data-class="6-А">6-А</a>
+      <a href="https://drive.google.com/drive/folders/1B-L_4Tl0zbkw28WGNau3cEuvEMPdcm-8" class="class-btn" data-class="6-Б">6-Б</a>
+      <a href="https://drive.google.com/drive/folders/1FQicnMNd_myibv3wauvAwRs4yxouGS0J" class="class-btn" data-class="6-В">6-В</a>
+      <a href="https://drive.google.com/drive/folders/1B7zZwtLn1WuS6LIJsbS-NEXDqM_tlYfg" class="class-btn" data-class="7-Б">7-Б</a>
+      <a href="https://drive.google.com/drive/folders/1qkLDuxXHZky5X3BBcwo3UzD_wk5izZXk" class="class-btn" data-class="8-Г">8-Г</a>
+      <a href="https://drive.google.com/drive/folders/1QeKR_-mCK4hXtC7bPvHuhtHTS_qttsRz" class="class-btn" data-class="9-Б">9-Б</a>
+      <a href="https://drive.google.com/drive/folders/16Si2BXuuIWfA-NM4Te7IvBUgMzxqsDlr" class="class-btn" data-class="9-В">9-В</a>
     </div>
 
     <a href="games.html" class="rules-btn games-btn">Ігри-тренажери</a>
     <a href="rules.html" class="rules-btn">Правила поведінки в кабінеті</a>
   </div>
+
+  <!-- Модальне вікно для введення коду -->
+  <div id="code-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2 id="modal-title">Введіть код доступу</h2>
+      <input type="text" id="code-input" placeholder="Код" autocomplete="off">
+      <p id="code-error" class="code-error"></p>
+      <div class="modal-buttons">
+        <button id="code-submit" class="modal-btn submit">Увійти</button>
+        <button id="code-cancel" class="modal-btn cancel">Скасувати</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: linear-gradient(135deg, #1a1a3e 0%, #0f2847 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+      max-width: 320px;
+      width: 90%;
+      animation: modalAppear 0.3s ease;
+    }
+    @keyframes modalAppear {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-content h2 {
+      color: white;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+    #code-input {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1.2rem;
+      font-family: 'Inter', sans-serif;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    #code-input:focus {
+      border-color: #667eea;
+    }
+    #code-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .code-error {
+      color: #f5576c;
+      font-size: 0.9rem;
+      min-height: 24px;
+      margin: 12px 0;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .modal-btn {
+      flex: 1;
+      padding: 12px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .modal-btn.submit {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .modal-btn.submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    .modal-btn.cancel {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .modal-btn.cancel:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  </style>
+
+  <script>
+    const CODES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgPkg22sevwr3wrTJyl7PXdpTOYNxk5fvlfRmkuKvzrDjlr6D4bQSKaOW8BdXWm9ItU0yJHSRiHW1v/pub?gid=0&single=true&output=csv';
+
+    let classCodes = {};
+    let currentLink = null;
+    let currentClass = null;
+
+    // Завантаження кодів при старті
+    async function loadCodes() {
+      try {
+        const response = await fetch(CODES_URL);
+        const csv = await response.text();
+        const lines = csv.trim().split('\n');
+
+        // Пропускаємо заголовок
+        for (let i = 1; i < lines.length; i++) {
+          const [className, code] = lines[i].split(',');
+          if (className && code) {
+            classCodes[className.trim()] = code.trim();
+          }
+        }
+      } catch (error) {
+        console.error('Помилка завантаження кодів:', error);
+      }
+    }
+
+    // DOM елементи
+    const modal = document.getElementById('code-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const codeInput = document.getElementById('code-input');
+    const codeError = document.getElementById('code-error');
+    const submitBtn = document.getElementById('code-submit');
+    const cancelBtn = document.getElementById('code-cancel');
+
+    // Відкрити модальне вікно
+    function openModal(className, link) {
+      currentClass = className;
+      currentLink = link;
+      modalTitle.textContent = `Код для ${className}`;
+      codeInput.value = '';
+      codeError.textContent = '';
+      modal.classList.add('active');
+      codeInput.focus();
+    }
+
+    // Закрити модальне вікно
+    function closeModal() {
+      modal.classList.remove('active');
+      currentLink = null;
+      currentClass = null;
+    }
+
+    // Перевірити код
+    function checkCode() {
+      const enteredCode = codeInput.value.trim();
+      const correctCode = classCodes[currentClass];
+
+      if (!correctCode) {
+        codeError.textContent = 'Помилка: код не знайдено';
+        return;
+      }
+
+      if (enteredCode === correctCode) {
+        window.location.href = currentLink;
+      } else {
+        codeError.textContent = 'Невірний код';
+        codeInput.select();
+      }
+    }
+
+    // Обробники подій
+    document.querySelectorAll('.class-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const className = btn.dataset.class;
+        const link = btn.href;
+        openModal(className, link);
+      });
+    });
+
+    submitBtn.addEventListener('click', checkCode);
+    cancelBtn.addEventListener('click', closeModal);
+
+    codeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkCode();
+      if (e.key === 'Escape') closeModal();
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Завантажити коди при старті
+    loadCodes();
+  </script>
 </body>
 </html>
