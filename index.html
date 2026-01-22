@@ -277,7 +277,9 @@
     // Завантаження коду для конкретного класу
     async function fetchCodeForClass(className) {
       try {
-        const response = await fetch(CODES_URL + '&_t=' + Date.now()); // cache bust
+        const response = await fetch(CODES_URL + '&_t=' + Date.now(), {
+          cache: 'no-store'
+        });
         const csv = await response.text();
         const lines = csv.trim().split('\n');
 
