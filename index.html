@@ -52,6 +52,12 @@
     <a href="rules.html" class="rules-btn">Правила поведінки в кабінеті</a>
   </div>
 
+  <!-- Overlay успішного входу -->
+  <div id="success-overlay" class="success-overlay">
+    <div class="success-icon">✅</div>
+    <div class="success-text">Переходимо...</div>
+  </div>
+
   <!-- Модальне вікно для введення коду -->
   <div id="code-modal" class="modal-overlay">
     <div class="modal-content">
@@ -156,6 +162,43 @@
     .modal-btn.cancel:hover {
       background: rgba(255, 255, 255, 0.15);
     }
+
+    /* Success overlay */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      flex-direction: column;
+    }
+    .success-overlay.active {
+      display: flex;
+    }
+    .success-icon {
+      font-size: 5rem;
+      animation: successPop 0.5s ease;
+    }
+    .success-text {
+      color: white;
+      font-size: 1.5rem;
+      margin-top: 20px;
+      animation: fadeInUp 0.5s ease 0.2s both;
+    }
+    @keyframes successPop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
   </style>
 
   <script>
@@ -210,6 +253,18 @@
       currentClass = null;
     }
 
+    // Показати успіх і редірект
+    const successOverlay = document.getElementById('success-overlay');
+
+    function showSuccessAndRedirect(link) {
+      modal.classList.remove('active');
+      successOverlay.classList.add('active');
+
+      setTimeout(() => {
+        window.location.href = link;
+      }, 1000);
+    }
+
     // Перевірити код
     function checkCode() {
       const enteredCode = codeInput.value.trim();
@@ -221,7 +276,7 @@
       }
 
       if (enteredCode === correctCode) {
-        window.location.href = currentLink;
+        showSuccessAndRedirect(currentLink);
       } else {
         codeError.textContent = 'Невірний код';
         codeInput.select();
