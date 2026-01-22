@@ -60,7 +60,10 @@ Contains all CSS styles organized in sections:
 
 ### index.html
 - Main navigation page with class buttons
-- Links to Google Drive folders for each class
+- Links to Google Drive folders for each class (protected by access codes)
+- Access codes loaded from Google Sheets CSV at runtime
+- Modal dialog for code entry with validation
+- Portal animation on successful authentication
 - Link to rules page
 - Link to games page
 
@@ -123,9 +126,19 @@ Contains all CSS styles organized in sections:
 
 - Language: Ukrainian (`lang="uk"`)
 - Each class button links to a hardcoded Google Drive folder URL
+- **Access codes**: Loaded from published Google Sheets CSV, can be changed without redeployment
 - Responsive design: 2-column grid on desktop, single column on mobile (<500px)
 - 8 classes served: 5-В, 6-А, 6-Б, 6-В, 7-Б, 8-Г, 9-Б, 9-В
 - Accessibility: supports `prefers-reduced-motion`
+
+## Access Code System
+
+- Codes stored in Google Sheets (published as CSV)
+- CSV URL configured in `index.html` → `CODES_URL` constant
+- Format: `Клас,Код` (header row, then data rows)
+- Codes fetched on page load via `fetch()` API
+- Modal prompts for code when class button clicked
+- Portal animation displays on successful code entry
 
 ## CSS Modifiers
 
