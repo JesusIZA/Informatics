@@ -83,7 +83,7 @@ const THEMES = {
       { emoji: '🐐', category: 'farm' },
       { emoji: '🐓', category: 'farm' },
       { emoji: '🦆', category: 'farm' },
-      { emoji: '🐇', category: 'farm' },
+      { emoji: '🐤', category: 'farm' },
       { emoji: '🐕', category: 'farm' },
       { emoji: '🐈', category: 'farm' },
       { emoji: '🦃', category: 'farm' },
@@ -99,7 +99,7 @@ const THEMES = {
       { emoji: '🦅', category: 'forest' },
       { emoji: '🐦', category: 'forest' },
       { emoji: '🦇', category: 'forest' },
-      { emoji: '🐸', category: 'forest' },
+      { emoji: '🦡', category: 'forest' },
       // Вода (12 шт)
       { emoji: '🐟', category: 'water' },
       { emoji: '🐬', category: 'water' },
