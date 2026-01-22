@@ -182,7 +182,7 @@ const THEMES = {
       { emoji: '🌾', category: 'autumn' },
       { emoji: '🍄', category: 'autumn' },
       { emoji: '🧥', category: 'autumn' },
-      { emoji: '🫖', category: 'autumn' },
+      { emoji: '🧹', category: 'autumn' },
       { emoji: '📚', category: 'autumn' },
       { emoji: '🌧️', category: 'autumn' },
       { emoji: '🧺', category: 'autumn' }
