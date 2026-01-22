@@ -328,6 +328,7 @@
       successOverlay.classList.add('active');
 
       setTimeout(() => {
+        successOverlay.classList.remove('active');
         window.location.href = link;
       }, 300);
     }
@@ -379,6 +380,14 @@
     window.addEventListener('pageshow', () => {
       successOverlay.classList.remove('active');
       modal.classList.remove('active');
+    });
+
+    // Для мобільних - скинути при поверненні фокусу на сторінку
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        successOverlay.classList.remove('active');
+        modal.classList.remove('active');
+      }
     });
   </script>
 </body>
