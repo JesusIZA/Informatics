@@ -33,7 +33,7 @@ const THEMES = {
       { id: 'vegetables', name: 'Овочі', icon: '🥕' }
     ],
     items: [
-      // Фрукти (15 шт)
+      // Фрукти (16 шт)
       { emoji: '🍎', category: 'fruits' },
       { emoji: '🍐', category: 'fruits' },
       { emoji: '🍊', category: 'fruits' },
@@ -49,7 +49,8 @@ const THEMES = {
       { emoji: '🍉', category: 'fruits' },
       { emoji: '🫐', category: 'fruits' },
       { emoji: '🍈', category: 'fruits' },
-      // Овочі (15 шт)
+      { emoji: '🍏', category: 'fruits' },
+      // Овочі (16 шт)
       { emoji: '🥕', category: 'vegetables' },
       { emoji: '🥒', category: 'vegetables' },
       { emoji: '🍅', category: 'vegetables' },
@@ -61,10 +62,11 @@ const THEMES = {
       { emoji: '🌶️', category: 'vegetables' },
       { emoji: '🥬', category: 'vegetables' },
       { emoji: '🧄', category: 'vegetables' },
-      { emoji: '🥜', category: 'vegetables' },
       { emoji: '🫑', category: 'vegetables' },
       { emoji: '🫛', category: 'vegetables' },
-      { emoji: '🥗', category: 'vegetables' }
+      { emoji: '🫚', category: 'vegetables' },
+      { emoji: '🥑', category: 'vegetables' },
+      { emoji: '🍠', category: 'vegetables' }
     ]
   },
   animals: {
@@ -74,7 +76,7 @@ const THEMES = {
       { id: 'water', name: 'Вода', icon: '🌊' }
     ],
     items: [
-      // Ферма (12 шт)
+      // Ферма (13 шт)
       { emoji: '🐄', category: 'farm' },
       { emoji: '🐷', category: 'farm' },
       { emoji: '🐔', category: 'farm' },
@@ -87,7 +89,8 @@ const THEMES = {
       { emoji: '🐕', category: 'farm' },
       { emoji: '🐈', category: 'farm' },
       { emoji: '🦃', category: 'farm' },
-      // Ліс (12 шт)
+      { emoji: '🐂', category: 'farm' },
+      // Ліс (17 шт)
       { emoji: '🦊', category: 'forest' },
       { emoji: '🐻', category: 'forest' },
       { emoji: '🦌', category: 'forest' },
@@ -100,7 +103,12 @@ const THEMES = {
       { emoji: '🐦', category: 'forest' },
       { emoji: '🦇', category: 'forest' },
       { emoji: '🦡', category: 'forest' },
-      // Вода (12 шт)
+      { emoji: '🦝', category: 'forest' },
+      { emoji: '🦫', category: 'forest' },
+      { emoji: '🐍', category: 'forest' },
+      { emoji: '🦨', category: 'forest' },
+      { emoji: '🦎', category: 'forest' },
+      // Вода (17 шт)
       { emoji: '🐟', category: 'water' },
       { emoji: '🐬', category: 'water' },
       { emoji: '🐙', category: 'water' },
@@ -112,7 +120,12 @@ const THEMES = {
       { emoji: '🦀', category: 'water' },
       { emoji: '🐠', category: 'water' },
       { emoji: '🦞', category: 'water' },
-      { emoji: '🐡', category: 'water' }
+      { emoji: '🐡', category: 'water' },
+      { emoji: '🦐', category: 'water' },
+      { emoji: '🐸', category: 'water' },
+      { emoji: '🐊', category: 'water' },
+      { emoji: '🪼', category: 'water' },
+      { emoji: '🦪', category: 'water' }
     ]
   },
   seasons: {
@@ -123,7 +136,7 @@ const THEMES = {
       { id: 'autumn', name: 'Осінь', icon: '🍂' }
     ],
     items: [
-      // Зима (10 шт)
+      // Зима (12 шт)
       { emoji: '⛄', category: 'winter' },
       { emoji: '🎿', category: 'winter' },
       { emoji: '🧣', category: 'winter' },
@@ -134,7 +147,9 @@ const THEMES = {
       { emoji: '🏂', category: 'winter' },
       { emoji: '🎅', category: 'winter' },
       { emoji: '🛷', category: 'winter' },
-      // Весна (10 шт)
+      { emoji: '🏒', category: 'winter' },
+      { emoji: '🌨️', category: 'winter' },
+      // Весна (11 шт)
       { emoji: '🌷', category: 'spring' },
       { emoji: '🐣', category: 'spring' },
       { emoji: '🌈', category: 'spring' },
@@ -145,10 +160,10 @@ const THEMES = {
       { emoji: '🐰', category: 'spring' },
       { emoji: '🌼', category: 'spring' },
       { emoji: '🪺', category: 'spring' },
-      // Літо (10 шт)
+      { emoji: '🐛', category: 'spring' },
+      // Літо (11 шт)
       { emoji: '🏖️', category: 'summer' },
       { emoji: '🍦', category: 'summer' },
-      { emoji: '🌻', category: 'summer' },
       { emoji: '🩴', category: 'summer' },
       { emoji: '🏊', category: 'summer' },
       { emoji: '🧴', category: 'summer' },
@@ -156,17 +171,21 @@ const THEMES = {
       { emoji: '🍹', category: 'summer' },
       { emoji: '🩱', category: 'summer' },
       { emoji: '🌴', category: 'summer' },
-      // Осінь (10 шт)
+      { emoji: '🏄', category: 'summer' },
+      { emoji: '🤿', category: 'summer' },
+      // Осінь (12 шт)
       { emoji: '🍁', category: 'autumn' },
       { emoji: '🎃', category: 'autumn' },
       { emoji: '🌰', category: 'autumn' },
       { emoji: '☂️', category: 'autumn' },
       { emoji: '🍂', category: 'autumn' },
-      { emoji: '🥧', category: 'autumn' },
       { emoji: '🌾', category: 'autumn' },
       { emoji: '🍄', category: 'autumn' },
       { emoji: '🧥', category: 'autumn' },
-      { emoji: '🫖', category: 'autumn' }
+      { emoji: '🫖', category: 'autumn' },
+      { emoji: '📚', category: 'autumn' },
+      { emoji: '🌧️', category: 'autumn' },
+      { emoji: '🧺', category: 'autumn' }
     ]
   }
 };
