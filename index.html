@@ -52,9 +52,16 @@
     <a href="rules.html" class="rules-btn">Правила поведінки в кабінеті</a>
   </div>
 
-  <!-- Overlay успішного входу -->
+  <!-- Overlay успішного входу - Портал -->
   <div id="success-overlay" class="success-overlay">
-    <div class="success-icon">✅</div>
+    <div class="portal">
+      <div class="portal-ring ring-1"></div>
+      <div class="portal-ring ring-2"></div>
+      <div class="portal-ring ring-3"></div>
+      <div class="portal-center">
+        <span class="portal-icon">🚀</span>
+      </div>
+    </div>
     <div class="success-text">Переходимо...</div>
   </div>
 
@@ -163,7 +170,7 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
-    /* Success overlay */
+    /* Success overlay - Portal */
     .success-overlay {
       display: none;
       position: fixed;
@@ -171,7 +178,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.95);
       justify-content: center;
       align-items: center;
       z-index: 1001;
@@ -179,22 +186,95 @@
     }
     .success-overlay.active {
       display: flex;
+      animation: overlayZoom 0.4s ease forwards;
     }
-    .success-icon {
-      font-size: 5rem;
-      animation: successPop 0.25s ease;
+    @keyframes overlayZoom {
+      0% { background: rgba(0, 0, 0, 0); }
+      100% { background: rgba(0, 0, 0, 0.95); }
     }
+
+    .portal {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .portal-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      animation: portalSpin 0.8s linear infinite;
+    }
+
+    .ring-1 {
+      width: 180px;
+      height: 180px;
+      border-top-color: #667eea;
+      border-right-color: #764ba2;
+      animation-duration: 0.6s;
+    }
+
+    .ring-2 {
+      width: 140px;
+      height: 140px;
+      border-bottom-color: #f093fb;
+      border-left-color: #4facfe;
+      animation-duration: 0.5s;
+      animation-direction: reverse;
+    }
+
+    .ring-3 {
+      width: 100px;
+      height: 100px;
+      border-top-color: #43e97b;
+      border-right-color: #38f9d7;
+      animation-duration: 0.4s;
+    }
+
+    @keyframes portalSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .portal-center {
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, #667eea 0%, #1a1a3e 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: portalPulse 0.3s ease infinite alternate;
+      box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+    }
+
+    @keyframes portalPulse {
+      from { transform: scale(1); box-shadow: 0 0 30px rgba(102, 126, 234, 0.8); }
+      to { transform: scale(1.1); box-shadow: 0 0 50px rgba(102, 126, 234, 1); }
+    }
+
+    .portal-icon {
+      font-size: 1.8rem;
+      animation: rocketLaunch 0.4s ease forwards;
+    }
+
+    @keyframes rocketLaunch {
+      0% { transform: translateY(10px) scale(0.8); opacity: 0; }
+      50% { transform: translateY(0) scale(1.1); opacity: 1; }
+      100% { transform: translateY(-5px) scale(1); opacity: 1; }
+    }
+
     .success-text {
       color: white;
-      font-size: 1.5rem;
-      margin-top: 20px;
-      animation: fadeInUp 0.2s ease 0.1s both;
+      font-size: 1.3rem;
+      margin-top: 30px;
+      animation: fadeInUp 0.3s ease 0.1s both;
+      text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
     }
-    @keyframes successPop {
-      0% { transform: scale(0); opacity: 0; }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1); opacity: 1; }
-    }
+
     @keyframes fadeInUp {
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
@@ -262,7 +342,7 @@
 
       setTimeout(() => {
         window.location.href = link;
-      }, 300);
+      }, 700);
     }
 
     // Перевірити код
