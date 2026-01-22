@@ -271,26 +271,26 @@
   <script>
     const CODES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgPkg22sevwr3wrTJyl7PXdpTOYNxk5fvlfRmkuKvzrDjlr6D4bQSKaOW8BdXWm9ItU0yJHSRiHW1v/pub?gid=0&single=true&output=csv';
 
-    let classCodes = {};
     let currentLink = null;
     let currentClass = null;
 
-    // Завантаження кодів при старті
-    async function loadCodes() {
+    // Завантаження коду для конкретного класу
+    async function fetchCodeForClass(className) {
       try {
-        const response = await fetch(CODES_URL);
+        const response = await fetch(CODES_URL + '&_t=' + Date.now()); // cache bust
         const csv = await response.text();
         const lines = csv.trim().split('\n');
 
-        // Пропускаємо заголовок
         for (let i = 1; i < lines.length; i++) {
-          const [className, code] = lines[i].split(',');
-          if (className && code) {
-            classCodes[className.trim()] = code.trim();
+          const [name, code] = lines[i].split(',');
+          if (name && name.trim() === className) {
+            return code.trim();
           }
         }
+        return null;
       } catch (error) {
         console.error('Помилка завантаження кодів:', error);
+        return null;
       }
     }
 
@@ -333,9 +333,18 @@
     }
 
     // Перевірити код
-    function checkCode() {
+    async function checkCode() {
       const enteredCode = codeInput.value.trim();
-      const correctCode = classCodes[currentClass];
+
+      // Блокуємо кнопку під час перевірки
+      submitBtn.disabled = true;
+      submitBtn.textContent = '...';
+      codeError.textContent = '';
+
+      const correctCode = await fetchCodeForClass(currentClass);
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Увійти';
 
       if (!correctCode) {
         codeError.textContent = 'Помилка: код не знайдено';
@@ -371,9 +380,6 @@
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
     });
-
-    // Завантажити коди при старті
-    loadCodes();
 
     // Скинути стан при поверненні на сторінку (кнопка "назад")
     window.addEventListener('pageshow', () => {
