@@ -8,9 +8,10 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* ===== SCREENS ===== */
@@ -36,8 +37,9 @@ body {
   padding-bottom: 40px;
 }
 
-#menu-screen.active {
-  display: flex;
+/* Game screen needs full height for game area */
+#game-screen {
+  height: 100%;
 }
 
 /* ===== MENU SCREEN ===== */
