@@ -34,6 +34,10 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 │   │   ├── index.html
 │   │   ├── styles.css
 │   │   └── script.js
+│   ├── keyboard-typing/            # "Набери слово" game
+│   │   ├── index.html
+│   │   ├── styles.css
+│   │   └── script.js
 │   ├── memory-pairs/               # "Знайди пару" game
 │   │   ├── index.html
 │   │   ├── styles.css
@@ -96,6 +100,21 @@ Contains all CSS styles organized in sections:
 - Timer ring shows remaining time for each letter
 - High scores saved in localStorage (`keyboardLettersRecords`)
 
+### Keyboard Typing Game (`games/keyboard-typing/`)
+- Type complete Ukrainian words as they appear
+- 3 difficulty levels:
+  - Easy (3-5 letter words, 12s per word, 1 word max)
+  - Medium (4-7 letter words, 10s per word, 2 words max)
+  - Hard (5-10 letter words, 9s per word, 2 words max)
+- Word types: normal (×1), golden (×2), fast (×1.5, ×0.6 time), time bonus (+5 sec)
+- Each letter in word highlighted as typed (current letter pulses)
+- Golden words glow, fast words pulse when active
+- 3 errors per word = word skipped, lose life
+- Combo system: 3+ streak = ×1.5, 6+ = ×2, 10+ = ×3
+- Stats: words completed, characters typed, accuracy %, speed (chars/min)
+- ~340 Ukrainian words dictionary built-in
+- High scores saved in localStorage (`keyboardTypingRecords`)
+
 ### Memory Pairs Game (`games/memory-pairs/`)
 - Classic memory card matching game
 - 3 difficulty levels with different grid sizes:
@@ -121,6 +140,18 @@ Contains all CSS styles organized in sections:
 - Combo system: 3+ streak = ×1.5, 5+ = ×2, 8+ = ×3
 - Time bonus for remaining seconds on win
 - High scores saved in localStorage (`mouseDragRecords`)
+
+### Mouse Aim Game (`games/mouse-aim/`)
+- Click targets to score points based on accuracy
+- 3 difficulty levels:
+  - Easy (4s per target, 2 max targets, size 80-100px)
+  - Medium (3s per target, 3 max targets, size 60-80px)
+  - Hard (2s per target, 4 max targets, size 45-60px)
+- Target zones: outer (1pt), middle (2pt), bullseye (5pt)
+- Target types: normal, golden (×2 points), fast (×0.6 time), time bonus (+5 sec)
+- Combo system: 5+ streak = ×2, 10+ = ×3, 15+ = ×4
+- 60 seconds gameplay, 3 lives
+- High scores saved in localStorage (`mouseAimRecords`)
 
 ## Key Details
 
@@ -164,6 +195,8 @@ games/[game-name]/
 
 ### localStorage keys:
 - `balloonGameRecords` - mouse click game records
-- `keyboardLettersRecords` - keyboard letters game records
-- `memoryPairsRecords` - memory pairs game records
+- `mouseAimRecords` - mouse aim game records
 - `mouseDragRecords` - mouse drag game records
+- `keyboardLettersRecords` - keyboard letters game records
+- `keyboardTypingRecords` - keyboard typing game records
+- `memoryPairsRecords` - memory pairs game records
