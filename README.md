@@ -82,6 +82,8 @@
   ├── rules.html                    # Правила поведінки
   ├── games.html                    # Каталог ігор
   ├── styles.css                    # Стилі (спільні для всіх сторінок)
+  ├── docs/
+  │   └── project-analytics.md      # Аналітика проекту
   ├── games/
   │   ├── mouse-click/              # Гра "Лопни кульку"
   │   │   ├── index.html

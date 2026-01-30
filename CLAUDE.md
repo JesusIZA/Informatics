@@ -46,6 +46,8 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 │       ├── index.html
 │       ├── styles.css
 │       └── script.js
+├── docs/
+│   └── project-analytics.md        # Project analytics and statistics
 ├── CLAUDE.md                       # AI assistant guide
 └── README.md                       # Project documentation (Ukrainian)
 ```
