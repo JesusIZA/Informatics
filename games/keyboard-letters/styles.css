@@ -261,10 +261,10 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
