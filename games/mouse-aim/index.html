@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Влучний стрілець | Ігри-тренажери</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23667eea'/%3E%3Cstop offset='100%25' stop-color='%23f093fb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23g)'/%3E%3Ctext x='50' y='72' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EI%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="matrix">
+    <span>10110101</span>
+    <span>01101001</span>
+    <span>11010110</span>
+    <span>00101101</span>
+    <span>10011010</span>
+    <span>01110100</span>
+    <span>11001011</span>
+    <span>00110110</span>
+    <span>10101001</span>
+    <span>01011010</span>
+  </div>
+
+  <div class="shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+    <div class="shape shape-6"></div>
+  </div>
+
+  <div class="game-container">
+    <!-- Menu Screen -->
+    <div id="menu-screen" class="screen active">
+      <div class="menu-content">
+        <div class="game-emoji">🎯</div>
+        <h1>Влучний стрілець</h1>
+        <p class="menu-subtitle">Клікай по мішенях якомога точніше</p>
+
+        <div class="difficulty-section">
+          <h2>Обери рівень складності</h2>
+          <div class="difficulty-buttons">
+            <button class="difficulty-btn" data-level="easy">
+              <span>Легкий</span>
+              <span class="record" id="record-easy">Рекорд: 0</span>
+            </button>
+            <button class="difficulty-btn" data-level="medium">
+              <span>Середній</span>
+              <span class="record" id="record-medium">Рекорд: 0</span>
+            </button>
+            <button class="difficulty-btn" data-level="hard">
+              <span>Важкий</span>
+              <span class="record" id="record-hard">Рекорд: 0</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="records-section">
+          <h3>Типи мішеней</h3>
+          <div class="records-list">
+            <div class="record-item">
+              <div class="score">🔵</div>
+              <div class="level">1/2/5 очок</div>
+            </div>
+            <div class="record-item">
+              <div class="score">✨</div>
+              <div class="level">2/5/10 очок</div>
+            </div>
+            <div class="record-item">
+              <div class="score">🔴</div>
+              <div class="level">3/5/8 очок</div>
+            </div>
+            <div class="record-item">
+              <div class="score">🟢</div>
+              <div class="level">+5 сек</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="records-section">
+          <h3>Зони влучання</h3>
+          <div class="zones-info">
+            <div class="zone-item">
+              <span class="zone-circle outer"></span>
+              <span>Зовнішня</span>
+            </div>
+            <div class="zone-item">
+              <span class="zone-circle middle"></span>
+              <span>Середня</span>
+            </div>
+            <div class="zone-item">
+              <span class="zone-circle inner"></span>
+              <span>Яблучко</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="../../games.html" class="menu-back-btn">← Назад до ігор</a>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+      <div class="game-hud">
+        <div class="hud-item hud-score">
+          <span class="label">Очки</span>
+          <span class="value" id="score">0</span>
+        </div>
+        <div class="hud-item hud-time">
+          <span class="label">Час</span>
+          <span class="value" id="time">60</span>
+        </div>
+        <div class="hud-item">
+          <span class="label">Життя</span>
+          <div class="hud-lives" id="lives">
+            <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
+          </div>
+        </div>
+        <div class="hud-item hud-combo">
+          <span class="label">Серія</span>
+          <span class="value" id="combo">x1</span>
+        </div>
+        <button class="pause-btn" id="pause-btn">⏸️ Пауза</button>
+      </div>
+      <div id="game-area">
+        <!-- Targets will be added dynamically -->
+      </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pause-overlay">
+      <h2>⏸️ Пауза</h2>
+      <div class="pause-buttons">
+        <button class="pause-action-btn resume" id="resume-btn">▶️ Продовжити</button>
+        <button class="pause-action-btn quit" id="quit-btn">🚪 Вийти в меню</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="screen">
+      <div class="result-content">
+        <div class="result-emoji" id="result-emoji">🎉</div>
+        <h2 id="result-title">Гру завершено!</h2>
+        <div class="final-score" id="final-score">0</div>
+        <div class="final-score-label">очок</div>
+        <div class="new-record" id="new-record" style="display: none;">🏆 Новий рекорд!</div>
+
+        <div class="result-stats">
+          <div class="stat-item">
+            <div class="stat-value" id="stat-hits">0</div>
+            <div class="stat-label">влучань</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-accuracy">0%</div>
+            <div class="stat-label">точність</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-best-combo">0</div>
+            <div class="stat-label">найкраща серія</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-bullseyes">0</div>
+            <div class="stat-label">яблучок</div>
+          </div>
+        </div>
+
+        <div class="result-buttons">
+          <button class="result-btn play-again" id="play-again-btn">🔄 Грати ще</button>
+          <button class="result-btn back-to-menu" id="back-menu-btn">📋 До меню</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
