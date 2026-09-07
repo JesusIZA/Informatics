@@ -12,7 +12,8 @@ A static HTML/CSS/JS web application in Ukrainian serving as a navigation portal
 - **External CSS**: Main styles in `styles.css` (shared across pages), game-specific styles in game folders
 - **JavaScript**: Used only in games (vanilla JS, no frameworks)
 - **No build system**: Open directly in browser or deploy to any static hosting
-- **External dependency**: Google Fonts "Inter" loaded via CDN
+- **External dependency**: Google Fonts via CDN — "Balsamiq Sans" (headings, buttons), "Nunito" (body), "Inter" (still referenced inside game stylesheets)
+- **Visual theme ("Candy Pop")**: light pastel background, white cards with 3px dark outline and a hard offset shadow that "presses" on click, playful colors per class button. Game pages (`games/*/`) keep the original dark theme via a `body:has(.game-container)` override block at the end of `styles.css`, because their own stylesheets assume a dark background and white text.
 
 ## Development
 
@@ -57,8 +58,12 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 ### styles.css
 Contains all CSS styles organized in sections:
 - Base styles (reset, body)
-- Matrix animation (falling binary code effect)
-- Floating shapes (animated background elements)
+- CSS custom properties (`:root`): palette (`--ink`, `--coral`, `--sky`, ...), fonts, border/shadow sizes
+- Polka-dot overlay (`body::before`) on main pages
+- Matrix animation (falling binary code) — hidden on main pages, shown only in games
+- Background stickers: on main pages the empty `<div class="shapes">` is filled by `background.js` — the viewport is split into a grid of cells and one emoji `<span class="sticker stk-*">` is placed at a random offset inside each cell (even spread, random positions on every load; 28 on desktop, 18 tablet, 10 mobile). Position/size/tilt/duration/delay come as inline CSS variables (`--x --y --size --tilt --dur --delay`); each of the 28 emoji has its own `@keyframes stk-*` animation in `styles.css`. Game pages keep their 6 static `div.shape` styled as the original floating geometric shapes (the script exits when `.game-container` exists)
+- Headings: ink-colored with a soft white halo (`text-shadow`) so they stay readable over background stickers. The main title is `<h1 class="logo">Інформатика</h1>`: `background.js` splits it into `span.logo-letter` elements (`--i` index) and CSS gives each letter its own color, tilt, pop-in delay and a gentle wave; letters bounce on hover
+- Entrance animation `slideUp` uses individual `translate`/`scale` properties so it never overrides hover `transform` (hover must not swap the `animation` property, otherwise the element replays its entrance and blinks)
 - Container (`.container`, `.container.wide`)
 - Animations (keyframes)
 - Page-specific components (class buttons, rules sections, game cards)
@@ -69,7 +74,7 @@ Contains all CSS styles organized in sections:
 - Links to Google Drive folders for each class (protected by access codes)
 - Access codes loaded from Google Sheets CSV at runtime
 - Modal dialog for code entry with validation
-- Portal animation on successful authentication
+- Success animation: six palette-colored vertical stripes slide up one after another (curtain wipe, ~0.65 s total), then a white card with a folder emoji pops in; redirect after 800 ms
 - Link to rules page
 - Link to games page
 
@@ -159,23 +164,25 @@ Contains all CSS styles organized in sections:
 
 - Language: Ukrainian (`lang="uk"`)
 - Each class button links to a hardcoded Google Drive folder URL
-- **Access codes**: Loaded from published Google Sheets CSV, can be changed without redeployment
-- Responsive design: 2-column grid on desktop, single column on mobile (<500px)
-- 8 classes served: 5-В, 6-А, 6-Б, 6-В, 7-Б, 8-Г, 9-Б, 9-В
+- **Access codes**: Loaded at runtime as CSV from a shared Google Sheet (export URL), can be changed without redeployment
+- Responsive design: 3-column grid of class buttons filled column-wise (one column per grade: 5th, 6th, others); smaller padding/font on mobile (<500px)
+- 9 classes served: 5-А, 5-Б, 5-В, 6-А, 6-Б, 6-В, 7-В, 8-Б, 9-Б
 - Accessibility: supports `prefers-reduced-motion`
 
 ## Access Code System
 
-- Codes stored in Google Sheets (published as CSV)
-- CSV URL configured in `index.html` → `CODES_URL` constant
+- Codes stored in a Google Sheet shared as "anyone with the link can view" (no "publish to web" needed)
+- Sheet: https://docs.google.com/spreadsheets/d/1pF5NQbIy92UI_4gsGXKDy6Q2jF1u7FWG2WAxmIqBHrQ/edit — configured via `SHEET_ID` / `SHEET_GID` constants in `index.html`
+- Loaded via Google Visualization API as JSONP (`gviz/tq?tqx=out:json;responseHandler:onCodesLoaded`, injected `<script>` tag), not `fetch()`: Google omits CORS headers on the redirect when the page is opened from `file://` (origin `null`), so plain fetch fails locally. JSONP works both on GitHub Pages and from a local file.
+- Column A = class name, column B = code; the formatted cell value (`f`) is used so codes keep leading zeros
 - Format: `Клас,Код` (header row, then data rows)
 - Codes fetched on page load via `fetch()` API
 - Modal prompts for code when class button clicked
-- Portal animation displays on successful code entry
+- Curtain-wipe + folder animation displays on successful code entry, redirect after 800 ms
 
 ## CSS Modifiers
 
-- `.container.wide` - wider container (700px vs 550px)
+- `.container.wide` - same 700px max-width as `.container` (kept for rules/games pages; base container was widened from 550px to 700px)
 - `h1.rules-title` - smaller title with more bottom margin
 - `.game-card.coming-soon` - disabled game card with "Скоро" badge
 

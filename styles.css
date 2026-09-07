@@ -1,17 +1,70 @@
+/* =====================================================================
+   ТЕМА "CANDY POP" — яркий мультяшний стиль для дітей
+   Шрифти: Balsamiq Sans (заголовки, кнопки), Nunito (текст)
+   Прийом: білі картки з товстою обводкою та "твердою" тінню знизу,
+   яка "натискається" при кліку.
+   ===================================================================== */
+
+:root {
+  --ink: #2b2350;          /* глибокий індиго — обводки, текст */
+  --ink-soft: #6b6389;     /* другорядний текст */
+  --paper: #ffffff;        /* фон карток */
+  --bg-1: #fff1f7;
+  --bg-2: #eef4ff;
+  --bg-3: #e9fff7;
+
+  --coral: #ff6b6b;
+  --tangerine: #ff9f1c;
+  --sunflower: #ffd93d;
+  --lime: #a3e635;
+  --mint: #34d399;
+  --aqua: #22d3ee;
+  --sky: #4d96ff;
+  --grape: #9b5de5;
+  --bubblegum: #f15bb5;
+
+  --radius: 20px;
+  --border: 3px;
+  --shadow-h: 6px;         /* висота "твердої" тіні */
+  --font-head: 'Balsamiq Sans', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+}
+
 /* ===== БАЗОВІ СТИЛІ ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
+  color: var(--ink);
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0f2847 100%);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 217, 61, 0.35), transparent 35%),
+    radial-gradient(circle at 85% 15%, rgba(241, 91, 181, 0.25), transparent 35%),
+    radial-gradient(circle at 80% 85%, rgba(77, 150, 255, 0.28), transparent 40%),
+    radial-gradient(circle at 15% 85%, rgba(52, 211, 153, 0.28), transparent 38%),
+    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+  background-attachment: fixed;
   padding: 40px 20px;
   overflow-x: hidden;
   position: relative;
 }
 
-/* ===== БІНАРНИЙ КОД (МАТРИЦЯ) ===== */
+/* Візерунок у горошок поверх фону */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(43, 35, 80, 0.09) 2px, transparent 2.6px);
+  background-size: 30px 30px;
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 1) 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 1) 80%);
+}
+
+/* ===== БІНАРНИЙ КОД — на головних сторінках прихований (лишається в іграх) ===== */
 .matrix {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -39,18 +92,10 @@ body {
   100% { transform: translateY(100vh); opacity: 0; }
 }
 
-.matrix span:nth-child(1) { left: 5%; animation-duration: 8s; animation-delay: 0s; }
-.matrix span:nth-child(2) { left: 15%; animation-duration: 10s; animation-delay: 1s; }
-.matrix span:nth-child(3) { left: 25%; animation-duration: 7s; animation-delay: 2s; }
-.matrix span:nth-child(4) { left: 35%; animation-duration: 9s; animation-delay: 0.5s; }
-.matrix span:nth-child(5) { left: 45%; animation-duration: 11s; animation-delay: 1.5s; }
-.matrix span:nth-child(6) { left: 55%; animation-duration: 8s; animation-delay: 2.5s; }
-.matrix span:nth-child(7) { left: 65%; animation-duration: 10s; animation-delay: 0.8s; }
-.matrix span:nth-child(8) { left: 75%; animation-duration: 7s; animation-delay: 1.8s; }
-.matrix span:nth-child(9) { left: 85%; animation-duration: 9s; animation-delay: 3s; }
-.matrix span:nth-child(10) { left: 95%; animation-duration: 12s; animation-delay: 0.3s; }
-
-/* ===== ПЛАВАЮЧІ ФІГУРИ ===== */
+/* ===== СТІКЕРИ НА ФОНІ =====
+   Генеруються скриптом background.js: позиція (--x, --y), розмір (--size),
+   нахил (--tilt), тривалість (--dur) і зсув (--delay) анімації задаються
+   інлайново для кожного стікера. Клас stk-* визначає унікальну анімацію. */
 .shapes {
   position: fixed;
   top: 0;
@@ -60,87 +105,230 @@ body {
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
 }
 
-.shape {
+.shapes.stickers-ready { opacity: 1; }
+
+.sticker {
   position: absolute;
-  opacity: 0.1;
-  animation: float 20s ease-in-out infinite;
+  left: var(--x);
+  top: var(--y);
+  font-size: var(--size, 56px);
+  line-height: 1;
+  opacity: 0.32;
+  rotate: var(--tilt, 0deg);           /* базовий нахил не конфліктує з transform в анімаціях */
+  translate: -50% -50%;                /* центр стікера — у точці (--x, --y) */
+  filter: drop-shadow(0 5px 0 rgba(43, 35, 80, 0.16));
+  animation: stk-bob var(--dur, 5s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  user-select: none;
+  will-change: transform;
 }
 
-.shape-1 {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-  top: 10%;
-  left: 10%;
-  animation-delay: 0s;
-}
+/* --- Унікальні анімації для кожного емодзі --- */
+.stk-rocket    { animation-name: stk-rocket; }
+.stk-glow      { animation-name: stk-glow; }
+.stk-twinkle   { animation-name: stk-twinkle; }
+.stk-wobble    { animation-name: stk-wobble; }
+.stk-nudge     { animation-name: stk-nudge; }
+.stk-bob       { animation-name: stk-bob; }
+.stk-hover     { animation-name: stk-hover; }
+.stk-typing    { animation-name: stk-typing; animation-timing-function: steps(2, jump-none); }
+.stk-robot     { animation-name: stk-robot; animation-timing-function: steps(4, jump-none); }
+.stk-rumble    { animation-name: stk-rumble; animation-timing-function: linear; }
+.stk-write     { animation-name: stk-write; }
+.stk-flip      { animation-name: stk-flip; animation-timing-function: ease-in-out; }
+.stk-slide     { animation-name: stk-slide; }
+.stk-flash     { animation-name: stk-flash; animation-timing-function: linear; }
+.stk-breathe   { animation-name: stk-breathe; }
+.stk-pulse     { animation-name: stk-pulse; animation-timing-function: ease-out; }
+.stk-search    { animation-name: stk-search; animation-timing-function: linear; }
+.stk-heartbeat { animation-name: stk-heartbeat; }
+.stk-tick      { animation-name: stk-tick; animation-timing-function: steps(6, jump-none); }
+.stk-hop       { animation-name: stk-hop; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+.stk-sway      { animation-name: stk-sway; }
+.stk-flutter   { animation-name: stk-flutter; }
+.stk-magnet    { animation-name: stk-magnet; }
+.stk-charge    { animation-name: stk-charge; animation-timing-function: steps(5, jump-none); }
+.stk-orbit     { animation-name: stk-orbit; animation-timing-function: linear; }
+.stk-spin      { animation-name: stk-spin; animation-timing-function: linear; }
+.stk-joystick  { animation-name: stk-joystick; }
+.stk-signal    { animation-name: stk-signal; }
 
-.shape-2 {
-  width: 120px;
-  height: 120px;
-  background: linear-gradient(135deg, #f093fb, #f5576c);
-  border-radius: 50%;
-  top: 60%;
-  right: 10%;
-  animation-delay: -5s;
-  animation-duration: 25s;
+/* 🚀 злітає по діагоналі й повертається */
+@keyframes stk-rocket {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(14px, -22px); }
 }
-
-.shape-3 {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  top: 30%;
-  right: 20%;
-  animation-delay: -10s;
-  transform: rotate(45deg);
+/* 💡 світиться яскравіше і трохи більшає */
+@keyframes stk-glow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 5px 0 rgba(43, 35, 80, 0.16)) brightness(1); }
+  50% { transform: scale(1.12); filter: drop-shadow(0 0 14px rgba(255, 217, 61, 0.9)) brightness(1.25); }
 }
-
-.shape-4 {
-  width: 100px;
-  height: 100px;
-  background: linear-gradient(135deg, #43e97b, #38f9d7);
-  border-radius: 50% 20% 50% 20%;
-  bottom: 20%;
-  left: 15%;
-  animation-delay: -7s;
-  animation-duration: 22s;
+/* ⭐ мерехтить і повертається */
+@keyframes stk-twinkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.32; }
+  50% { transform: scale(1.3) rotate(20deg); opacity: 0.7; }
 }
-
-.shape-5 {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #fa709a, #fee140);
-  border-radius: 50%;
-  top: 70%;
-  left: 50%;
-  animation-delay: -3s;
+/* 🧩 хитається з боку в бік */
+@keyframes stk-wobble {
+  0%, 100% { transform: rotate(-12deg); }
+  50% { transform: rotate(12deg); }
 }
-
-.shape-6 {
-  width: 70px;
-  height: 70px;
-  border: 3px solid rgba(167, 139, 250, 0.3);
-  border-radius: 50%;
-  top: 20%;
-  right: 30%;
-  animation-delay: -12s;
-  animation-duration: 18s;
+/* 🖱️ підштовхується вбік і "клікає" */
+@keyframes stk-nudge {
+  0%, 100% { transform: translateX(0) scale(1); }
+  40% { transform: translateX(14px) scale(1); }
+  50% { transform: translateX(14px) scale(0.9); }
+  60% { transform: translateX(14px) scale(1); }
 }
-
-@keyframes float {
+/* 📚 легко погойдується */
+@keyframes stk-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+/* 💻 ширяє з невеличким нахилом */
+@keyframes stk-hover {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(4deg); }
+}
+/* ⌨️ трясеться, ніби хтось друкує */
+@keyframes stk-typing {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(3px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(3px); }
+}
+/* 🤖 повертає голову ривками */
+@keyframes stk-robot {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+/* 🎮 вібрує, потім спокій */
+@keyframes stk-rumble {
+  0%, 20%, 100% { transform: translate(0, 0); }
+  4% { transform: translate(-3px, 2px); }
+  8% { transform: translate(3px, -2px); }
+  12% { transform: translate(-3px, -2px); }
+  16% { transform: translate(3px, 2px); }
+}
+/* ✏️ пише зигзагом */
+@keyframes stk-write {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(30px, -30px) rotate(90deg); }
-  50% { transform: translate(-20px, 20px) rotate(180deg); }
-  75% { transform: translate(20px, 30px) rotate(270deg); }
+  25% { transform: translate(8px, 5px) rotate(-6deg); }
+  50% { transform: translate(16px, 0) rotate(0deg); }
+  75% { transform: translate(8px, -5px) rotate(6deg); }
+}
+/* 💾 перевертається навколо вертикальної осі */
+@keyframes stk-flip {
+  0%, 100% { transform: perspective(200px) rotateY(0deg); }
+  50% { transform: perspective(200px) rotateY(180deg); }
+}
+/* 🧮 їздить убік, як кісточки */
+@keyframes stk-slide {
+  0%, 100% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+}
+/* ⚡ спалахує */
+@keyframes stk-flash {
+  0%, 84%, 100% { opacity: 0.32; transform: scale(1); }
+  88% { opacity: 0.75; transform: scale(1.25); }
+  92% { opacity: 0.25; transform: scale(1); }
+  96% { opacity: 0.75; transform: scale(1.2); }
+}
+/* 🖥️ "дихає" */
+@keyframes stk-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.09); }
+}
+/* 🎯 пульсує, ніби влучили */
+@keyframes stk-pulse {
+  0%, 60%, 100% { transform: scale(1); }
+  70% { transform: scale(1.3); }
+  80% { transform: scale(0.95); }
+  90% { transform: scale(1.1); }
+}
+/* 🔍 шукає — рухається по колу */
+@keyframes stk-search {
+  0% { transform: translate(10px, 0); }
+  25% { transform: translate(0, 10px); }
+  50% { transform: translate(-10px, 0); }
+  75% { transform: translate(0, -10px); }
+  100% { transform: translate(10px, 0); }
+}
+/* 🧠 б'ється, як серце */
+@keyframes stk-heartbeat {
+  0%, 30%, 100% { transform: scale(1); }
+  10% { transform: scale(1.15); }
+  20% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+}
+/* 📐 тікає, як стрілка */
+@keyframes stk-tick {
+  0%, 100% { transform: rotate(-9deg); }
+  50% { transform: rotate(9deg); }
+}
+/* 🔢 підстрибує */
+@keyframes stk-hop {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  40% { transform: translateY(-18px) scaleY(1.05); }
+  55% { transform: translateY(0) scaleY(0.9); }
+  65% { transform: translateY(-6px) scaleY(1); }
+  75% { transform: translateY(0) scaleY(1); }
+}
+/* 🎧 похитується в ритм */
+@keyframes stk-sway {
+  0%, 100% { transform: rotate(-8deg) translateY(0); }
+  25% { transform: rotate(0deg) translateY(-5px); }
+  50% { transform: rotate(8deg) translateY(0); }
+  75% { transform: rotate(0deg) translateY(-5px); }
+}
+/* 📝 тріпоче, як аркуш */
+@keyframes stk-flutter {
+  0%, 100% { transform: perspective(200px) rotateX(0deg) skewX(0deg); }
+  50% { transform: perspective(200px) rotateX(25deg) skewX(-6deg); }
+}
+/* 🧲 притягує — тягнеться вгору і відскакує */
+@keyframes stk-magnet {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-16px); }
+  45% { transform: translateY(-12px); }
+  55% { transform: translateY(-16px); }
+}
+/* 🔋 заряджається — росте ривками */
+@keyframes stk-charge {
+  0% { transform: scale(0.9); opacity: 0.22; }
+  100% { transform: scale(1.1); opacity: 0.5; }
+}
+/* 🛰️ обертається по орбіті */
+@keyframes stk-orbit {
+  0% { transform: rotate(0deg) translateX(14px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(14px) rotate(-360deg); }
+}
+/* 💿 крутиться */
+@keyframes stk-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+/* 🕹️ нахиляється в різні боки, як важіль */
+@keyframes stk-joystick {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-15deg); }
+  40% { transform: rotate(0deg); }
+  60% { transform: rotate(15deg); }
+  80% { transform: rotate(0deg); }
+}
+/* 📡 передає сигнал — коливається і трохи більшає */
+@keyframes stk-signal {
+  0%, 100% { transform: rotate(-6deg) scale(1); }
+  50% { transform: rotate(6deg) scale(1.08); }
 }
 
 /* ===== КОНТЕЙНЕР ===== */
 .container {
-  max-width: 550px;
+  max-width: 700px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -151,20 +339,9 @@ body {
 }
 
 /* ===== АНІМАЦІЇ ===== */
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
@@ -172,211 +349,260 @@ body {
   to { opacity: 1; }
 }
 
+/* Анімація появи використовує окремі властивості translate/scale,
+   щоб не конфліктувати з transform при наведенні */
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; translate: 0 40px; scale: 0.9; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
 }
 
 /* ===== ЗАГОЛОВОК ===== */
 h1 {
+  font-family: var(--font-head);
   text-align: center;
-  font-size: 2.5rem;
+  font-size: 3rem;
+  line-height: 1.15;
   margin-bottom: 10px;
+  color: var(--ink);
+  /* Світлий ореол відділяє темний текст від стікерів на фоні */
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.95),
+    0 0 14px rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.02em;
+  position: relative;
   animation: fadeInDown 0.8s ease-out;
-  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: fadeInDown 0.8s ease-out, gradientShift 4s ease-in-out infinite;
+}
+
+/* ===== ЛОГОТИП "ІНФОРМАТИКА" — кожна літера окремо ===== */
+h1.logo {
+  font-size: 5rem;
+  line-height: 1;
+  margin-bottom: 26px;
+  padding-top: 12px;
+  text-shadow: none;
+  animation: none;
+  white-space: nowrap;
+}
+
+.logo-letter {
+  display: inline-block;
+  color: var(--letter, var(--sky));
+  -webkit-text-stroke: 3px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 0 6px 0 var(--ink);
+  rotate: var(--tilt, 0deg);
+  translate: 0 var(--lift, 0px);
+  /* поява: вискакує з-під низу з обертанням, далі — легка хвиля */
+  animation:
+    logo-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+    logo-wave 3.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.07s), calc(1s + var(--i) * 0.12s);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: default;
+}
+
+/* Літера підскакує під курсором */
+.logo-letter:hover {
+  transform: translateY(-10px) scale(1.15);
+}
+
+/* Кольори та нахили літер: І н ф о р м а т и к а */
+.logo-letter:nth-child(1)  { --letter: var(--coral);     --tilt: -6deg; --lift: 2px; }
+.logo-letter:nth-child(2)  { --letter: var(--tangerine); --tilt: 4deg;  --lift: -3px; }
+.logo-letter:nth-child(3)  { --letter: var(--sunflower); --tilt: -3deg; --lift: 1px; }
+.logo-letter:nth-child(4)  { --letter: var(--lime);      --tilt: 5deg;  --lift: -2px; }
+.logo-letter:nth-child(5)  { --letter: var(--mint);      --tilt: -5deg; --lift: 3px; }
+.logo-letter:nth-child(6)  { --letter: var(--aqua);      --tilt: 3deg;  --lift: -1px; }
+.logo-letter:nth-child(7)  { --letter: var(--sky);       --tilt: -4deg; --lift: 2px; }
+.logo-letter:nth-child(8)  { --letter: var(--grape);     --tilt: 6deg;  --lift: -3px; }
+.logo-letter:nth-child(9)  { --letter: var(--bubblegum); --tilt: -3deg; --lift: 1px; }
+.logo-letter:nth-child(10) { --letter: var(--coral);     --tilt: 4deg;  --lift: -2px; }
+.logo-letter:nth-child(11) { --letter: var(--sunflower); --tilt: -5deg; --lift: 2px; }
+
+@keyframes logo-pop {
+  from { opacity: 0; scale: 0.3; translate: 0 40px; }
+  to { opacity: 1; scale: 1; translate: 0 var(--lift, 0px); }
+}
+
+@keyframes logo-wave {
+  0%, 100% { translate: 0 var(--lift, 0px); }
+  50% { translate: 0 calc(var(--lift, 0px) - 6px); }
+}
+
+/* Кольорова "маркерна" смужка під заголовком */
+h1::after {
+  content: '';
+  display: block;
+  width: 180px;
+  height: 12px;
+  margin: 8px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--coral), var(--sunflower), var(--mint), var(--sky), var(--grape));
+  transform: rotate(-1.5deg);
 }
 
 h1.rules-title {
-  font-size: 2.2rem;
+  font-size: 2.3rem;
   margin-bottom: 40px;
 }
 
 .subtitle {
   text-align: center;
-  color: rgba(255,255,255,0.6);
+  color: var(--ink-soft);
   margin-bottom: 40px;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
   animation: fadeIn 1s ease-out 0.3s both;
+}
+
+/* ===== СПІЛЬНИЙ СТИЛЬ "МУЛЬТЯШНОЇ" КАРТКИ ===== */
+.class-btn,
+.rules-btn,
+.back-btn,
+.rules-section,
+.game-card {
+  border: var(--border) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 0 var(--shadow-h) 0 var(--ink);
 }
 
 /* ===== СІТКА КЛАСІВ ===== */
 .classes {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column; /* заповнення колонками: 5-ті | 6-ті | решта */
+  gap: 18px 28px;
+  position: relative;
+  padding: 10px 0;
 }
+
+/* Пунктирні розділювачі між колонками */
+.classes::before,
+.classes::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 3px dotted rgba(43, 35, 80, 0.25);
+  pointer-events: none;
+}
+
+.classes::before { left: calc(33.333% - 14px / 3); }
+.classes::after  { left: calc(66.667% + 14px / 3); }
 
 /* ===== КНОПКИ КЛАСІВ ===== */
 .class-btn {
   display: block;
-  padding: 22px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px 12px;
   color: #fff;
   text-decoration: none;
-  border-radius: 16px;
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-family: var(--font-head);
+  font-size: 1.7rem;
+  font-weight: 700;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.22);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
   position: relative;
-  overflow: hidden;
   animation: slideUp 0.6s ease-out both;
+  background: var(--sky);
 }
 
-.class-btn:nth-child(1) { animation-delay: 0.1s; }
-.class-btn:nth-child(2) { animation-delay: 0.15s; }
-.class-btn:nth-child(3) { animation-delay: 0.2s; }
-.class-btn:nth-child(4) { animation-delay: 0.25s; }
-.class-btn:nth-child(5) { animation-delay: 0.3s; }
-.class-btn:nth-child(6) { animation-delay: 0.35s; }
-.class-btn:nth-child(7) { animation-delay: 0.4s; }
-.class-btn:nth-child(8) { animation-delay: 0.45s; }
+.class-btn:nth-child(1) { animation-delay: 0.1s; background: var(--coral); }
+.class-btn:nth-child(2) { animation-delay: 0.15s; background: var(--tangerine); }
+.class-btn:nth-child(3) { animation-delay: 0.2s; background: var(--sunflower); color: var(--ink); text-shadow: none; }
+.class-btn:nth-child(4) { animation-delay: 0.25s; background: var(--mint); }
+.class-btn:nth-child(5) { animation-delay: 0.3s; background: var(--aqua); }
+.class-btn:nth-child(6) { animation-delay: 0.35s; background: var(--sky); }
+.class-btn:nth-child(7) { animation-delay: 0.4s; background: var(--grape); }
+.class-btn:nth-child(8) { animation-delay: 0.45s; background: var(--bubblegum); }
+.class-btn:nth-child(9) { animation-delay: 0.5s; background: var(--lime); color: var(--ink); text-shadow: none; }
 
+/* Блиск у кутку кнопки */
 .class-btn::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s;
+  top: 8px;
+  left: 12px;
+  width: 26px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
 }
 
-.class-btn:hover::before {
-  left: 100%;
-}
-
+/* При наведенні кнопка піднімається і трохи нахиляється, лишаючись у цьому стані */
 .class-btn:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow:
-    0 10px 30px rgba(102, 126, 234, 0.5),
-    0 0 40px rgba(102, 126, 234, 0.3),
-    inset 0 0 20px rgba(255,255,255,0.1);
+  transform: translateY(-5px) rotate(-2deg);
+  box-shadow: 0 calc(var(--shadow-h) + 5px) 0 var(--ink);
 }
 
-.class-btn:active {
-  transform: translateY(-2px) scale(1.01);
+.class-btn:nth-child(even):hover {
+  transform: translateY(-5px) rotate(2deg);
 }
 
-/* Кольори кнопок */
-.class-btn:nth-child(2) {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
-}
-.class-btn:nth-child(2):hover {
-  box-shadow: 0 10px 30px rgba(240, 147, 251, 0.5), 0 0 40px rgba(240, 147, 251, 0.3);
+.class-btn:active,
+.class-btn:nth-child(even):active {
+  transform: translateY(4px) rotate(0deg);
+  box-shadow: 0 2px 0 var(--ink);
+  transition-duration: 0.08s;
 }
 
-.class-btn:nth-child(3) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-}
-.class-btn:nth-child(3):hover {
-  box-shadow: 0 10px 30px rgba(79, 172, 254, 0.5), 0 0 40px rgba(79, 172, 254, 0.3);
-}
-
-.class-btn:nth-child(4) {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3);
-}
-.class-btn:nth-child(4):hover {
-  box-shadow: 0 10px 30px rgba(67, 233, 123, 0.5), 0 0 40px rgba(67, 233, 123, 0.3);
-}
-
-.class-btn:nth-child(5) {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
-}
-.class-btn:nth-child(5):hover {
-  box-shadow: 0 10px 30px rgba(250, 112, 154, 0.5), 0 0 40px rgba(250, 112, 154, 0.3);
-}
-
-.class-btn:nth-child(6) {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-  color: #333;
-  box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3);
-}
-.class-btn:nth-child(6):hover {
-  box-shadow: 0 10px 30px rgba(168, 237, 234, 0.5), 0 0 40px rgba(168, 237, 234, 0.3);
-}
-
-.class-btn:nth-child(7) {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-  color: #333;
-  box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3);
-}
-.class-btn:nth-child(7):hover {
-  box-shadow: 0 10px 30px rgba(255, 154, 158, 0.5), 0 0 40px rgba(255, 154, 158, 0.3);
-}
-
-.class-btn:nth-child(8) {
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-  color: #333;
-  box-shadow: 0 4px 15px rgba(255, 236, 210, 0.3);
-}
-.class-btn:nth-child(8):hover {
-  box-shadow: 0 10px 30px rgba(255, 236, 210, 0.5), 0 0 40px rgba(255, 236, 210, 0.3);
-}
-
-/* ===== КНОПКА ПРАВИЛ ===== */
+/* ===== КНОПКИ "ІГРИ" ТА "ПРАВИЛА" ===== */
 .rules-btn {
   display: block;
   width: 100%;
   padding: 16px;
   margin-top: 24px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.8);
+  background: var(--paper);
+  color: var(--ink);
   text-decoration: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 500;
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  font-weight: 700;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   animation: slideUp 0.6s ease-out 0.5s both;
 }
 
 .rules-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: rgba(255, 255, 255, 1);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 calc(var(--shadow-h) + 3px) 0 var(--ink);
+}
+
+.rules-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--ink);
 }
 
 .rules-btn.games-btn {
   margin-top: 40px;
   animation-delay: 0.55s;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(240, 147, 251, 0.2));
-  border-color: rgba(240, 147, 251, 0.3);
-}
-
-.rules-btn.games-btn:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(240, 147, 251, 0.3));
-  border-color: rgba(240, 147, 251, 0.5);
+  background: linear-gradient(90deg, var(--grape), var(--bubblegum));
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+  font-size: 1.3rem;
 }
 
 /* ===== СЕКЦІЇ ПРАВИЛ ===== */
 .rules-section {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  background: var(--paper);
   padding: 24px;
-  margin-bottom: 20px;
-  backdrop-filter: blur(10px);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
   animation: slideUp 0.6s ease-out both;
+}
+
+/* Кольорова смуга зліва */
+.rules-section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: var(--sky);
 }
 
 .rules-section:nth-child(1) { animation-delay: 0.1s; }
@@ -385,25 +611,33 @@ h1.rules-title {
 .rules-section:nth-child(4) { animation-delay: 0.4s; }
 
 .rules-section h2 {
-  font-size: 1.3rem;
-  margin-bottom: 16px;
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+  padding-left: 8px;
 }
 
-.rules-section.entry h2 { color: #4facfe; }
-.rules-section.forbidden h2 { color: #f5576c; }
-.rules-section.work h2 { color: #43e97b; }
-.rules-section.problems h2 { color: #fa709a; }
+.rules-section.entry::before { background: var(--sky); }
+.rules-section.forbidden::before { background: var(--coral); }
+.rules-section.work::before { background: var(--mint); }
+.rules-section.problems::before { background: var(--tangerine); }
+
+.rules-section.entry h2 { color: var(--sky); }
+.rules-section.forbidden h2 { color: var(--coral); }
+.rules-section.work h2 { color: #059669; }
+.rules-section.problems h2 { color: #d97706; }
 
 .rules-section ul {
   list-style: none;
-  padding: 0;
+  padding: 0 0 0 8px;
 }
 
 .rules-section li {
-  color: rgba(255, 255, 255, 0.85);
-  padding: 10px 0 10px 28px;
+  color: var(--ink);
+  font-weight: 600;
+  padding: 10px 0 10px 34px;
   position: relative;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 2px dashed rgba(43, 35, 80, 0.1);
   line-height: 1.5;
 }
 
@@ -415,15 +649,16 @@ h1.rules-title {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
+  border: var(--border) solid var(--ink);
 }
 
-.rules-section.entry li::before { background: #4facfe; }
-.rules-section.forbidden li::before { background: #f5576c; }
-.rules-section.work li::before { background: #43e97b; }
-.rules-section.problems li::before { background: #fa709a; }
+.rules-section.entry li::before { background: var(--sky); }
+.rules-section.forbidden li::before { background: var(--coral); }
+.rules-section.work li::before { background: var(--mint); }
+.rules-section.problems li::before { background: var(--tangerine); }
 
 /* ===== КНОПКА НАЗАД ===== */
 .back-btn {
@@ -431,28 +666,30 @@ h1.rules-title {
   width: 100%;
   padding: 18px;
   margin-top: 30px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.9);
+  background: var(--paper);
+  color: var(--ink);
   text-decoration: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  font-weight: 700;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   animation: slideUp 0.6s ease-out 0.5s both;
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 calc(var(--shadow-h) + 3px) 0 var(--ink);
+}
+
+.back-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--ink);
 }
 
 /* ===== СТОРІНКА ІГОР ===== */
 .game-category {
-  margin-bottom: 30px;
+  margin-bottom: 34px;
   animation: slideUp 0.6s ease-out both;
 }
 
@@ -462,68 +699,86 @@ h1.rules-title {
 .game-category:nth-child(5) { animation-delay: 0.4s; }
 
 .category-title {
-  font-size: 1.2rem;
+  display: inline-block;
+  font-family: var(--font-head);
+  font-size: 1.15rem;
   margin-bottom: 16px;
-  padding-left: 12px;
-  border-left: 4px solid;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: var(--border) solid var(--ink);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  transform: rotate(-1deg);
 }
 
-.category-title.category-mouse { color: #4facfe; border-color: #4facfe; }
-.category-title.category-keyboard { color: #43e97b; border-color: #43e97b; }
-.category-title.category-logic { color: #f093fb; border-color: #f093fb; }
-.category-title.category-external { color: #fa709a; border-color: #fa709a; }
+.category-title.category-mouse { background: var(--sky); }
+.category-title.category-keyboard { background: var(--mint); }
+.category-title.category-logic { background: var(--grape); }
+.category-title.category-external { background: var(--coral); }
 
 .games-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 16px;
 }
 
 .game-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  padding: 14px 16px;
+  background: var(--paper);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
 }
 
 .game-card:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateX(5px);
+  transform: translateY(-3px);
+  box-shadow: 0 calc(var(--shadow-h) + 3px) 0 var(--ink);
+}
+
+.game-card:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--ink);
 }
 
 .game-card.coming-soon {
-  opacity: 0.6;
+  opacity: 0.55;
   pointer-events: none;
+  box-shadow: none;
+  border-style: dashed;
 }
-
-.game-card-mouse:hover { border-color: rgba(79, 172, 254, 0.5); }
-.game-card-keyboard:hover { border-color: rgba(67, 233, 123, 0.5); }
-.game-card-logic:hover { border-color: rgba(240, 147, 251, 0.5); }
-.game-card-external:hover { border-color: rgba(250, 112, 154, 0.5); }
 
 .game-icon {
-  font-size: 2.2rem;
-  width: 50px;
-  text-align: center;
+  font-size: 2rem;
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  border: var(--border) solid var(--ink);
   flex-shrink: 0;
+  background: var(--sunflower);
 }
 
+.game-card-mouse .game-icon { background: #dbeafe; }
+.game-card-keyboard .game-icon { background: #d1fae5; }
+.game-card-logic .game-icon { background: #ede9fe; }
+.game-card-external .game-icon { background: #ffe4e6; }
+
 .game-info h3 {
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1.1rem;
-  margin-bottom: 4px;
+  font-family: var(--font-head);
+  color: var(--ink);
+  font-size: 1.2rem;
+  margin-bottom: 2px;
 }
 
 .game-info p {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.9rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .coming-soon-badge,
@@ -531,21 +786,23 @@ h1.rules-title {
   position: absolute;
   right: 16px;
   top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: 600;
+  transform: translateY(-50%) rotate(3deg);
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--ink);
+  font-weight: 700;
 }
 
 .coming-soon-badge {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
+  background: var(--sunflower);
+  color: var(--ink);
 }
 
 .external-badge {
-  background: rgba(250, 112, 154, 0.2);
-  color: #fa709a;
+  background: var(--coral);
+  color: #fff;
   font-size: 1rem;
 }
 
@@ -553,21 +810,87 @@ h1.rules-title {
 .footer {
   text-align: center;
   margin-top: 40px;
-  color: rgba(255,255,255,0.3);
-  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
   animation: fadeIn 1s ease-out 0.8s both;
 }
 
 /* ===== АДАПТИВНІСТЬ ===== */
 @media (max-width: 500px) {
-  .classes { grid-template-columns: 1fr; }
-  h1 { font-size: 2rem; }
+  body { padding: 28px 14px; }
+  .classes { gap: 12px 18px; padding: 6px 0; }
+  .classes::before { left: calc(33.333% - 3px); }
+  .classes::after  { left: calc(66.667% + 3px); }
+  .class-btn { padding: 16px 6px; font-size: 1.35rem; }
+  .class-btn::before { display: none; }
+  h1 { font-size: 2.2rem; }
+  h1.logo { font-size: 2.7rem; }
+  .logo-letter { -webkit-text-stroke-width: 2px; text-shadow: 0 4px 0 var(--ink); }
+  h1::after { width: 120px; height: 9px; }
   h1.rules-title { font-size: 1.7rem; }
-  .rules-section { padding: 18px; }
+  .rules-section { padding: 18px 18px 18px 22px; }
   .rules-section h2 { font-size: 1.15rem; }
   .rules-section li { font-size: 0.95rem; }
-  .shape { opacity: 0.05; }
+  .sticker { opacity: 0.22; font-size: calc(var(--size, 56px) * 0.7); }
 }
+
+/* =====================================================================
+   СТОРІНКИ ІГОР — зберігають темну тему (їхні власні стилі розраховані
+   на темний фон і білий текст). Спрацьовує за наявності .game-container.
+   ===================================================================== */
+body:has(.game-container) {
+  color: #fff;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0f2847 100%);
+}
+
+body:has(.game-container)::before { display: none; }
+
+body:has(.game-container) .matrix { display: block; }
+.matrix span:nth-child(1) { left: 5%; animation-duration: 8s; animation-delay: 0s; }
+.matrix span:nth-child(2) { left: 15%; animation-duration: 10s; animation-delay: 1s; }
+.matrix span:nth-child(3) { left: 25%; animation-duration: 7s; animation-delay: 2s; }
+.matrix span:nth-child(4) { left: 35%; animation-duration: 9s; animation-delay: 0.5s; }
+.matrix span:nth-child(5) { left: 45%; animation-duration: 11s; animation-delay: 1.5s; }
+.matrix span:nth-child(6) { left: 55%; animation-duration: 8s; animation-delay: 2.5s; }
+.matrix span:nth-child(7) { left: 65%; animation-duration: 10s; animation-delay: 0.8s; }
+.matrix span:nth-child(8) { left: 75%; animation-duration: 7s; animation-delay: 1.8s; }
+.matrix span:nth-child(9) { left: 85%; animation-duration: 9s; animation-delay: 3s; }
+.matrix span:nth-child(10) { left: 95%; animation-duration: 12s; animation-delay: 0.3s; }
+
+/* В іграх — колишні плаваючі геометричні фігури (статичні div.shape у HTML ігор) */
+body:has(.game-container) .shapes { opacity: 1; }
+body:has(.game-container) .shape {
+  position: absolute;
+  opacity: 0.1;
+  animation: float 20s ease-in-out infinite;
+}
+body:has(.game-container) .shape-1 { width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; top: 10%; left: 10%; animation-delay: 0s; }
+body:has(.game-container) .shape-2 { width: 120px; height: 120px; background: linear-gradient(135deg, #f093fb, #f5576c); border-radius: 50%; top: 60%; right: 10%; animation-delay: -5s; animation-duration: 25s; }
+body:has(.game-container) .shape-3 { width: 60px; height: 60px; background: linear-gradient(135deg, #4facfe, #00f2fe); top: 30%; right: 20%; animation-delay: -10s; }
+body:has(.game-container) .shape-4 { width: 100px; height: 100px; background: linear-gradient(135deg, #43e97b, #38f9d7); border-radius: 50% 20% 50% 20%; bottom: 20%; left: 15%; animation-delay: -7s; animation-duration: 22s; }
+body:has(.game-container) .shape-5 { width: 50px; height: 50px; background: linear-gradient(135deg, #fa709a, #fee140); border-radius: 50%; top: 70%; left: 50%; animation-delay: -3s; }
+body:has(.game-container) .shape-6 { width: 70px; height: 70px; border: 3px solid rgba(167, 139, 250, 0.3); border-radius: 50%; top: 20%; right: 30%; animation-delay: -12s; animation-duration: 18s; }
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(30px, -30px) rotate(90deg); }
+  50% { transform: translate(-20px, 20px) rotate(180deg); }
+  75% { transform: translate(20px, 30px) rotate(270deg); }
+}
+
+body:has(.game-container) h1 {
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  letter-spacing: normal;
+  color: transparent;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body:has(.game-container) h1::after { display: none; }
 
 /* ===== ЗМЕНШЕННЯ АНІМАЦІЙ ДЛЯ A11Y ===== */
 @media (prefers-reduced-motion: reduce) {
