@@ -209,3 +209,16 @@ games/[game-name]/
 - `keyboardLettersRecords` - keyboard letters game records
 - `keyboardTypingRecords` - keyboard typing game records
 - `memoryPairsRecords` - memory pairs game records
+
+## Ideas Backlog
+
+### Mood-based themes (discussed 2026-09-07, not started)
+Let a student pick a "mood" on the main page and switch the whole site to a matching theme.
+
+Agreed shape:
+- **Optional, not blocking**: the page opens as usual (default "Candy Pop"); a row of 4-5 large emoji "mood stickers" (near the logo or in place of the subtitle) switches the theme with a smooth transition. No separate screen, no extra step before the access code.
+- **Playful labels, not an emotional scale**: e.g. "сонячний", "спокійний", "космічний", "сонний" — never "сумний"/"злий" (screens are visible to classmates).
+- **Theme = palette + stickers + logo colors**, layout stays identical. Implement via a `data-theme="..."` attribute on `<body>` that overrides the `:root` CSS variables (`--bg-*`, `--coral`... `--ink`), swaps the sticker emoji pool in `background.js`, and may slow animations (e.g. "сонний"). The existing dark game theme can seed a "космічний" variant.
+- **Remember the choice** in `localStorage` for the current day only (per computer), so it isn't asked again during the same lesson; no data leaves the browser.
+- Keep buttons/codes/rules readable in every theme; verify all three main pages (index, rules, games) per theme with screenshots.
+- Suggested first step: two themes to evaluate the feel, then extend to 4.
