@@ -88,7 +88,7 @@ Contains all CSS styles organized in sections:
 - Categories: Mouse, Keyboard, Logic, "Завантажити на комп'ютер" (external)
 - Uses `.container.wide` layout
 - Cards with `.coming-soon` class are disabled
-- External card (`.game-card-external`, opens in new tab) downloads the "Сходинки до інформатики" game installer from Google Drive — direct-download URL `https://drive.google.com/uc?export=download&id=<FILE_ID>`; for large files Google shows a "download anyway" confirmation page first
+- External card (`.game-card-external`, opens in new tab) downloads the "Сходинки до інформатики" game installer (.exe, ~33 MB) from Google Drive. Use `https://drive.usercontent.google.com/download?id=<FILE_ID>&export=download&confirm=t` — the `confirm=t` parameter skips Google's "couldn't scan for viruses / download anyway" interstitial and returns the file directly (verified with curl: 200, `Content-Disposition: attachment`). The shorter `drive.google.com/uc?export=download` form shows the interstitial
 
 ## Games
 
