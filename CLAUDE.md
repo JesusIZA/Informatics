@@ -85,9 +85,10 @@ Contains all CSS styles organized in sections:
 
 ### games.html
 - Games hub page with categorized game cards
-- Categories: Mouse, Keyboard, Logic, External resources
+- Categories: Mouse, Keyboard, Logic, "Завантажити на комп'ютер" (external)
 - Uses `.container.wide` layout
 - Cards with `.coming-soon` class are disabled
+- External card (`.game-card-external`, opens in new tab) downloads the "Сходинки до інформатики" game installer from Google Drive — direct-download URL `https://drive.google.com/uc?export=download&id=<FILE_ID>`; for large files Google shows a "download anyway" confirmation page first
 
 ## Games
 
