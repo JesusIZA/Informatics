@@ -89,7 +89,7 @@ Contains all CSS styles organized in sections:
 - Categories: Mouse, Keyboard, Logic, "Завантажити на комп'ютер" (external)
 - Uses `.container.wide` layout
 - Cards with `.coming-soon` class are disabled
-- External card (`.game-card-external`) downloads the "Сходинки до інформатики" game installer, hosted in the repo itself as `games/Skhodynky_Setup.exe` (~33 MB, served by GitHub Pages; the `download` attribute restores the Cyrillic filename). Google Drive hosting was abandoned: for signed-in users Drive always shows a slow "couldn't scan for viruses / download anyway" interstitial for .exe files, even with `confirm=t`
+- External card (`.game-card-external`) downloads the "Сходинки до інформатики" game installer, hosted in the repo itself as `games/Skhodynky_Setup.exe` (~33 MB, served by GitHub Pages; bare `download` attribute, the saved file keeps the Latin name on purpose). The installer is unsigned, so Windows SmartScreen shows "Windows protected your PC" on first run — that cannot be fixed from the website, only by code-signing the installer. Google Drive hosting was abandoned: for signed-in users Drive always shows a slow "couldn't scan for viruses / download anyway" interstitial for .exe files, even with `confirm=t`
 
 ## Games
 
