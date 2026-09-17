@@ -6,8 +6,10 @@
    ===================================================================== */
 
 :root {
-  --ink: #2b2350;          /* глибокий індиго — обводки, текст */
-  --ink-soft: #6b6389;     /* другорядний текст */
+  --ink: #2b2350;          /* глибокий індиго — обводки й тверді тіні */
+  --ink-soft: #6b6389;
+  --text: var(--ink);      /* основний текст (у темних темах — світлий) */
+  --text-soft: var(--ink-soft);
   --paper: #ffffff;        /* фон карток */
   --bg-1: #fff1f7;
   --bg-2: #eef4ff;
@@ -35,7 +37,7 @@
 
 body {
   font-family: var(--font-body);
-  color: var(--ink);
+  color: var(--text);
   min-height: 100vh;
   background:
     radial-gradient(circle at 15% 20%, rgba(255, 217, 61, 0.35), transparent 35%),
@@ -363,7 +365,7 @@ h1 {
   font-size: 3rem;
   line-height: 1.15;
   margin-bottom: 10px;
-  color: var(--ink);
+  color: var(--text);
   /* Світлий ореол відділяє темний текст від стікерів на фоні */
   text-shadow:
     0 0 2px rgba(255, 255, 255, 0.95),
@@ -448,7 +450,7 @@ h1.rules-title {
 
 .subtitle {
   text-align: center;
-  color: var(--ink-soft);
+  color: var(--text-soft);
   margin-bottom: 40px;
   font-size: 1.2rem;
   font-weight: 700;
@@ -555,7 +557,7 @@ h1.rules-title {
   padding: 16px;
   margin-top: 24px;
   background: var(--paper);
-  color: var(--ink);
+  color: var(--text);
   text-decoration: none;
   font-family: var(--font-head);
   font-size: 1.15rem;
@@ -633,7 +635,7 @@ h1.rules-title {
 }
 
 .rules-section li {
-  color: var(--ink);
+  color: var(--text);
   font-weight: 600;
   padding: 10px 0 10px 34px;
   position: relative;
@@ -667,7 +669,7 @@ h1.rules-title {
   padding: 18px;
   margin-top: 30px;
   background: var(--paper);
-  color: var(--ink);
+  color: var(--text);
   text-decoration: none;
   font-family: var(--font-head);
   font-size: 1.15rem;
@@ -770,13 +772,13 @@ h1.rules-title {
 
 .game-info h3 {
   font-family: var(--font-head);
-  color: var(--ink);
+  color: var(--text);
   font-size: 1.2rem;
   margin-bottom: 2px;
 }
 
 .game-info p {
-  color: var(--ink-soft);
+  color: var(--text-soft);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -810,7 +812,7 @@ h1.rules-title {
 .footer {
   text-align: center;
   margin-top: 40px;
-  color: var(--ink-soft);
+  color: var(--text-soft);
   font-size: 0.9rem;
   font-weight: 600;
   animation: fadeIn 1s ease-out 0.8s both;
@@ -900,3 +902,454 @@ body:has(.game-container) h1::after { display: none; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =====================================================================
+   ПЕРЕМИКАЧ ТЕМ (створюється у background.js)
+   ===================================================================== */
+.theme-switcher {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 50;
+  display: flex;
+  gap: 8px;
+}
+
+.theme-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: var(--border) solid var(--ink);
+  background: var(--paper);
+  box-shadow: 0 4px 0 var(--ink);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.theme-btn:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 0 var(--ink);
+}
+
+.theme-btn.is-active {
+  opacity: 1;
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink), 0 0 0 3px var(--sky);
+  cursor: default;
+}
+
+.theme-btn:focus-visible {
+  outline: 3px solid var(--sky);
+  outline-offset: 2px;
+}
+
+/* Коротке затемнення при ручному перемиканні теми */
+body { transition: opacity 0.22s ease; }
+html.theme-fade body { opacity: 0; }
+
+@media (max-width: 500px) {
+  .theme-switcher { top: 8px; right: 8px; gap: 6px; }
+  .theme-btn { width: 38px; height: 38px; font-size: 18px; }
+}
+
+/* =====================================================================
+   ТЕМА "КОСМОС" — рівень 2 (7 клас і старші, поки немає рівня 3)
+   Темно-синій космос, неонові акценти, спокійніші анімації.
+   Вмикається атрибутом data-theme="cosmos" на <html>.
+   ===================================================================== */
+html[data-theme="cosmos"] {
+  --ink: #0a0d26;
+  --ink-soft: #8a91c7;
+  --text: #eef0ff;
+  --text-soft: #aab1e6;
+  --paper: #1a2050;
+  --bg-1: #0b1030;
+  --bg-2: #141a4a;
+  --bg-3: #0e2a4d;
+
+  --coral: #ff5c8a;
+  --tangerine: #ff8e3c;
+  --sunflower: #ffd166;
+  --lime: #9cff57;
+  --mint: #2ee6a6;
+  --aqua: #22d3ee;
+  --sky: #4f8dff;
+  --grape: #8b5cf6;
+  --bubblegum: #f472b6;
+
+  /* Шрифти теми: техно-гротеск для заголовків, футуристичний Exo 2 для тексту */
+  --font-head: 'Russo One', 'Exo 2', system-ui, sans-serif;
+  --font-body: 'Exo 2', 'Nunito', system-ui, sans-serif;
+}
+
+/* Russo One має лише одну вагу — прибираємо штучне потовщення */
+html[data-theme="cosmos"] :is(h1, .logo-letter, .class-btn, .rules-btn, .back-btn,
+  .category-title, .game-info h3, .rules-section h2, .coming-soon-badge, .external-badge,
+  .modal-content h2, #code-input, .modal-btn) {
+  font-weight: 400;
+}
+
+html[data-theme="cosmos"] body {
+  font-weight: 500;
+}
+
+html[data-theme="cosmos"] .subtitle,
+html[data-theme="cosmos"] .game-info p,
+html[data-theme="cosmos"] .rules-section li {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+html[data-theme="cosmos"] h1 {
+  letter-spacing: 0.04em;
+}
+
+/* Логотип: Russo One ширший за Balsamiq — трохи менший кегль і рівніші літери */
+html[data-theme="cosmos"] h1.logo {
+  font-size: 4.3rem;
+  letter-spacing: 0.02em;
+}
+html[data-theme="cosmos"] .logo-letter {
+  --tilt: 0deg;
+  --lift: 0px;
+}
+
+html[data-theme="cosmos"] .class-btn {
+  font-size: 1.55rem;
+  letter-spacing: 0.04em;
+}
+
+html[data-theme="cosmos"] body {
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(139, 92, 246, 0.35), transparent 45%),
+    radial-gradient(ellipse at 80% 25%, rgba(34, 211, 238, 0.22), transparent 40%),
+    radial-gradient(ellipse at 70% 85%, rgba(244, 114, 182, 0.22), transparent 45%),
+    radial-gradient(ellipse at 15% 80%, rgba(79, 141, 255, 0.25), transparent 40%),
+    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+}
+
+/* Зорі замість горошку: два шари дрібних точок різної щільності */
+html[data-theme="cosmos"] body::before {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 1px, transparent 1.4px),
+    radial-gradient(circle, rgba(173, 216, 255, 0.7) 1.4px, transparent 2px);
+  background-size: 190px 170px, 110px 130px, 320px 280px;
+  background-position: 0 0, 60px 40px, 120px 90px;
+  mask-image: none;
+  -webkit-mask-image: none;
+  opacity: 0.8;
+}
+
+html[data-theme="cosmos"] .sticker {
+  opacity: 0.3;
+  filter: drop-shadow(0 0 10px rgba(120, 140, 255, 0.45));
+}
+
+/* Заголовки: темний ореол замість білого */
+html[data-theme="cosmos"] h1 {
+  text-shadow:
+    0 0 2px rgba(10, 13, 38, 0.9),
+    0 0 16px rgba(10, 13, 38, 0.9);
+}
+html[data-theme="cosmos"] h1::after {
+  background: linear-gradient(90deg, var(--aqua), var(--grape), var(--bubblegum));
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.6);
+}
+
+/* Логотип: неонові літери трьох кольорів зі світінням */
+/* Літери чіткі: тонка темна підкладка дає контур, кольоровий ореол — лише навколо, не на краях */
+html[data-theme="cosmos"] .logo-letter {
+  -webkit-text-stroke: 0;
+  text-shadow:
+    0 2px 0 rgba(10, 13, 38, 0.85),
+    0 0 18px var(--letter-glow, rgba(139, 92, 246, 0.55));
+}
+html[data-theme="cosmos"] .logo-letter:nth-child(3n + 1) { --letter: var(--aqua);      --letter-glow: rgba(34, 211, 238, 0.5); }
+html[data-theme="cosmos"] .logo-letter:nth-child(3n + 2) { --letter: var(--grape);     --letter-glow: rgba(139, 92, 246, 0.6); }
+html[data-theme="cosmos"] .logo-letter:nth-child(3n)     { --letter: var(--bubblegum); --letter-glow: rgba(244, 114, 182, 0.5); }
+
+/* Розділювачі між колонками класів */
+html[data-theme="cosmos"] .classes::before,
+html[data-theme="cosmos"] .classes::after {
+  border-left-color: rgba(255, 255, 255, 0.22);
+}
+
+/* =====================================================================
+   КОСМОС: компоненти у стилі бортового інтерфейсу (HUD)
+   Майже прямі кути, тонка неонова лінія по контуру, кольорова смуга
+   на лівому краю, кутові "дужки", темне скло всередині.
+   Колір елемента задається трійкою RGB у --c.
+   ===================================================================== */
+html[data-theme="cosmos"] {
+  --hud-bg: rgba(10, 14, 44, 0.72);
+  --hud-line: 170, 182, 255;   /* нейтральний блакитно-сірий для другорядних панелей */
+}
+
+/* --- Спільна основа для всіх кнопок і панелей --- */
+html[data-theme="cosmos"] .class-btn,
+html[data-theme="cosmos"] .rules-btn,
+html[data-theme="cosmos"] .back-btn,
+html[data-theme="cosmos"] .rules-section,
+html[data-theme="cosmos"] .game-card,
+html[data-theme="cosmos"] .modal-content,
+html[data-theme="cosmos"] .success-card {
+  --c: var(--hud-line);
+  position: relative;
+  border-radius: 3px;
+  border: 1px solid rgba(var(--c), 0.45);
+  border-left: 3px solid rgb(var(--c));
+  background:
+    linear-gradient(90deg, rgba(var(--c), 0.16), rgba(var(--c), 0.03) 55%),
+    var(--hud-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.38),
+    0 0 16px rgba(var(--c), 0.12),
+    inset 0 0 26px rgba(var(--c), 0.06);
+}
+
+/* Кутові дужки (правий верхній та правий нижній кути) */
+html[data-theme="cosmos"] .class-btn::before,
+html[data-theme="cosmos"] .class-btn::after,
+html[data-theme="cosmos"] .rules-btn::before,
+html[data-theme="cosmos"] .rules-btn::after,
+html[data-theme="cosmos"] .back-btn::before,
+html[data-theme="cosmos"] .back-btn::after,
+html[data-theme="cosmos"] .game-card::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid rgb(var(--c));
+  background: none;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  opacity: 0.85;
+}
+html[data-theme="cosmos"] .class-btn::before,
+html[data-theme="cosmos"] .rules-btn::before,
+html[data-theme="cosmos"] .back-btn::before {
+  top: 6px;
+  left: auto;
+  border-top: 2px solid rgb(var(--c));
+  border-radius: 0;
+  transform: none;
+  animation: none;
+}
+html[data-theme="cosmos"] .class-btn::after,
+html[data-theme="cosmos"] .rules-btn::after,
+html[data-theme="cosmos"] .back-btn::after,
+html[data-theme="cosmos"] .game-card::after {
+  bottom: 6px;
+  border-bottom: 2px solid rgb(var(--c));
+}
+
+/* --- Інтерактив: підсвітка замість підняття --- */
+html[data-theme="cosmos"] .class-btn,
+html[data-theme="cosmos"] .rules-btn,
+html[data-theme="cosmos"] .back-btn,
+html[data-theme="cosmos"] .game-card {
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+html[data-theme="cosmos"] .class-btn:hover,
+html[data-theme="cosmos"] .class-btn:nth-child(even):hover,
+html[data-theme="cosmos"] .rules-btn:hover,
+html[data-theme="cosmos"] .back-btn:hover,
+html[data-theme="cosmos"] .game-card:hover {
+  transform: translateY(-2px) rotate(0deg);
+  border-color: rgba(var(--c), 0.9);
+  border-left-color: rgb(var(--c));
+  background:
+    linear-gradient(90deg, rgba(var(--c), 0.34), rgba(var(--c), 0.1) 60%),
+    var(--hud-bg);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.42),
+    0 0 26px rgba(var(--c), 0.35),
+    inset 0 0 30px rgba(var(--c), 0.12);
+}
+
+html[data-theme="cosmos"] .class-btn:active,
+html[data-theme="cosmos"] .class-btn:nth-child(even):active,
+html[data-theme="cosmos"] .rules-btn:active,
+html[data-theme="cosmos"] .back-btn:active,
+html[data-theme="cosmos"] .game-card:active {
+  transform: translateY(1px) rotate(0deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(var(--c), 0.2);
+}
+
+/* --- Кнопки класів: свій колір лінії та тексту --- */
+html[data-theme="cosmos"] .class-btn {
+  color: #fff;
+  text-shadow: 0 0 12px rgba(var(--c), 0.9);
+  letter-spacing: 0.1em;
+  padding: 22px 14px 22px 22px;
+  overflow: visible;
+}
+html[data-theme="cosmos"] .class-btn:nth-child(1) { --c: 99, 125, 255; }
+html[data-theme="cosmos"] .class-btn:nth-child(2) { --c: 155, 110, 255; }
+html[data-theme="cosmos"] .class-btn:nth-child(3) { --c: 217, 90, 240; color: #fff; }
+html[data-theme="cosmos"] .class-btn:nth-child(4) { --c: 46, 220, 190; }
+html[data-theme="cosmos"] .class-btn:nth-child(5) { --c: 34, 211, 238; }
+html[data-theme="cosmos"] .class-btn:nth-child(6) { --c: 80, 150, 255; }
+html[data-theme="cosmos"] .class-btn:nth-child(7) { --c: 140, 80, 255; }
+html[data-theme="cosmos"] .class-btn:nth-child(8) { --c: 240, 90, 160; }
+html[data-theme="cosmos"] .class-btn:nth-child(9) { --c: 60, 230, 150; color: #fff; }
+
+/* --- Кнопки "Ігри-тренажери", "Правила", "Назад" --- */
+html[data-theme="cosmos"] .rules-btn.games-btn {
+  --c: 34, 211, 238;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(var(--c), 0.9);
+  letter-spacing: 0.08em;
+}
+html[data-theme="cosmos"] .rules-btn.games-btn:hover {
+  border-color: rgba(var(--c), 0.9);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.42), 0 0 30px rgba(var(--c), 0.4), inset 0 0 30px rgba(var(--c), 0.14);
+}
+html[data-theme="cosmos"] .rules-btn,
+html[data-theme="cosmos"] .back-btn {
+  letter-spacing: 0.06em;
+}
+
+/* --- Секції правил: колір панелі за типом секції --- */
+html[data-theme="cosmos"] .rules-section::before { display: none; } /* смугу дає border-left */
+html[data-theme="cosmos"] .rules-section.entry     { --c: 80, 150, 255; }
+html[data-theme="cosmos"] .rules-section.forbidden { --c: 255, 92, 138; }
+html[data-theme="cosmos"] .rules-section.work      { --c: 46, 230, 166; }
+html[data-theme="cosmos"] .rules-section.problems  { --c: 255, 142, 60; }
+html[data-theme="cosmos"] .rules-section h2 { color: rgb(var(--c)); text-shadow: 0 0 12px rgba(var(--c), 0.6); letter-spacing: 0.04em; }
+html[data-theme="cosmos"] .rules-section li { border-bottom: 1px solid rgba(var(--c), 0.18); }
+html[data-theme="cosmos"] .rules-section li::before {
+  border: none;
+  border-radius: 0;
+  width: 8px;
+  height: 8px;
+  background: rgb(var(--c));
+  box-shadow: 0 0 10px rgba(var(--c), 0.9);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+/* --- Сторінка ігор --- */
+html[data-theme="cosmos"] .category-title {
+  background: transparent;
+  border: 1px solid rgba(var(--c), 0.7);
+  border-left: 3px solid rgb(var(--c));
+  border-radius: 3px;
+  color: rgb(var(--c));
+  text-shadow: 0 0 10px rgba(var(--c), 0.7);
+  box-shadow: 0 0 14px rgba(var(--c), 0.15);
+  transform: none;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  padding: 6px 14px;
+}
+html[data-theme="cosmos"] .category-title.category-mouse    { --c: 34, 211, 238; }
+html[data-theme="cosmos"] .category-title.category-keyboard { --c: 46, 230, 166; }
+html[data-theme="cosmos"] .category-title.category-logic    { --c: 180, 140, 255; }
+html[data-theme="cosmos"] .category-title.category-external { --c: 255, 92, 138; }
+
+html[data-theme="cosmos"] .game-card-mouse    { --c: 34, 211, 238; }
+html[data-theme="cosmos"] .game-card-keyboard { --c: 46, 230, 166; }
+html[data-theme="cosmos"] .game-card-logic    { --c: 180, 140, 255; }
+html[data-theme="cosmos"] .game-card-external { --c: 255, 92, 138; }
+
+html[data-theme="cosmos"] .game-icon,
+html[data-theme="cosmos"] .game-card-mouse .game-icon,
+html[data-theme="cosmos"] .game-card-keyboard .game-icon,
+html[data-theme="cosmos"] .game-card-logic .game-icon,
+html[data-theme="cosmos"] .game-card-external .game-icon {
+  border: 1px solid rgba(var(--c), 0.5);
+  border-radius: 3px;
+  background: rgba(var(--c), 0.1);
+  box-shadow: inset 0 0 14px rgba(var(--c), 0.15);
+}
+html[data-theme="cosmos"] .game-card.coming-soon {
+  border-style: dashed;
+  border-left-style: solid;
+  box-shadow: none;
+}
+html[data-theme="cosmos"] .game-card.coming-soon::after { display: none; }
+html[data-theme="cosmos"] .coming-soon-badge,
+html[data-theme="cosmos"] .external-badge {
+  border-width: 1px;
+  border-radius: 3px;
+  transform: translateY(-50%);
+  letter-spacing: 0.06em;
+}
+html[data-theme="cosmos"] .coming-soon-badge { color: var(--ink); }
+html[data-theme="cosmos"] .external-badge {
+  background: rgba(var(--c), 0.2);
+  border-color: rgb(var(--c));
+  color: rgb(var(--c));
+  box-shadow: 0 0 12px rgba(var(--c), 0.5);
+}
+
+/* --- Смуга під заголовком: тонка світна лінія --- */
+html[data-theme="cosmos"] h1::after {
+  height: 3px;
+  border-radius: 0;
+  transform: none;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.9), 0 0 28px rgba(34, 211, 238, 0.5);
+}
+
+/* --- Перемикач тем --- */
+html[data-theme="cosmos"] .theme-btn {
+  border: 1px solid rgba(var(--hud-line), 0.45);
+  border-radius: 3px;
+  background: var(--hud-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+html[data-theme="cosmos"] .theme-btn:hover {
+  border-color: rgba(34, 211, 238, 0.8);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(34, 211, 238, 0.3);
+}
+html[data-theme="cosmos"] .theme-btn.is-active {
+  transform: none;
+  border-color: var(--aqua);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.4), 0 0 18px rgba(34, 211, 238, 0.6);
+}
+
+/* --- Модальне вікно з кодом та картка успіху --- */
+html[data-theme="cosmos"] .modal-content,
+html[data-theme="cosmos"] .success-card { --c: 34, 211, 238; }
+html[data-theme="cosmos"] .success-card { border-radius: 6px; }
+html[data-theme="cosmos"] #code-input {
+  border: 1px solid rgba(var(--hud-line), 0.4);
+  border-radius: 3px;
+  letter-spacing: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+html[data-theme="cosmos"] #code-input:focus {
+  border-color: var(--aqua);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.4), 0 0 16px rgba(34, 211, 238, 0.4);
+}
+html[data-theme="cosmos"] .modal-btn {
+  --c: var(--hud-line);
+  border: 1px solid rgba(var(--c), 0.5);
+  border-radius: 3px;
+  background: var(--hud-bg);
+  color: #fff;
+  text-shadow: none;
+  letter-spacing: 0.06em;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+html[data-theme="cosmos"] .modal-btn.submit {
+  --c: 34, 211, 238;
+  background: linear-gradient(90deg, rgba(var(--c), 0.35), rgba(var(--c), 0.12)), var(--hud-bg);
+  border-color: rgba(var(--c), 0.9);
+  text-shadow: 0 0 10px rgba(var(--c), 0.9);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 16px rgba(var(--c), 0.3);
+}
+html[data-theme="cosmos"] .modal-btn:hover { transform: translateY(-2px); border-color: rgb(var(--c)); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 18px rgba(var(--c), 0.35); }
+html[data-theme="cosmos"] .modal-btn:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); }

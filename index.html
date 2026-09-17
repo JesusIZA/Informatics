@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Інформатика - Матеріали</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23667eea'/%3E%3Cstop offset='100%25' stop-color='%23f093fb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23g)'/%3E%3Ctext x='50' y='72' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EІ%3C/text%3E%3C/svg%3E">
-  <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=Nunito:wght@600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=Nunito:wght@600;700;800&family=Inter:wght@400;600;700&family=Russo+One&family=Exo+2:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script src="theme-init.js"></script>
 </head>
 <body>
   <!-- Бінарний код (матриця) -->
@@ -104,7 +105,7 @@
     }
     .modal-content h2 {
       font-family: var(--font-head);
-      color: var(--ink);
+      color: var(--text);
       font-size: 1.5rem;
       margin-bottom: 20px;
     }
@@ -118,7 +119,7 @@
       border: var(--border) solid var(--ink);
       border-radius: 14px;
       background: #f6f4ff;
-      color: var(--ink);
+      color: var(--text);
       text-align: center;
       outline: none;
       transition: background 0.2s, box-shadow 0.2s;
@@ -127,6 +128,9 @@
       background: #fff;
       box-shadow: 0 0 0 4px rgba(155, 93, 229, 0.35);
     }
+    html[data-theme="cosmos"] #code-input { background: rgba(255, 255, 255, 0.08); }
+    html[data-theme="cosmos"] #code-input:focus { background: rgba(255, 255, 255, 0.14); box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.35); }
+    html[data-theme="cosmos"] #code-input::placeholder { color: rgba(238, 240, 255, 0.35); }
     #code-input::placeholder {
       color: rgba(43, 35, 80, 0.35);
       letter-spacing: 0;
@@ -174,7 +178,7 @@
     }
     .modal-btn.cancel {
       background: var(--paper);
-      color: var(--ink);
+      color: var(--text);
     }
 
     /* Loading dots animation */

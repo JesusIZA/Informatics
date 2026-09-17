@@ -10,10 +10,15 @@ A static HTML/CSS/JS web application in Ukrainian serving as a navigation portal
 
 - **Multi-page application**: Separate HTML files for each page
 - **External CSS**: Main styles in `styles.css` (shared across pages), game-specific styles in game folders
-- **JavaScript**: Used only in games (vanilla JS, no frameworks)
+- **JavaScript**: vanilla, no frameworks. Games have their own scripts; main pages load `theme-init.js` (in `<head>`, applies the saved theme before first paint) and `background.js` (themes, theme switcher, logo letters, background stickers)
 - **No build system**: Open directly in browser or deploy to any static hosting
 - **External dependency**: Google Fonts via CDN — "Balsamiq Sans" (headings, buttons), "Nunito" (body), "Inter" (still referenced inside game stylesheets)
-- **Visual theme ("Candy Pop")**: light pastel background, white cards with 3px dark outline and a hard offset shadow that "presses" on click, playful colors per class button. Game pages (`games/*/`) keep the original dark theme via a `body:has(.game-container)` override block at the end of `styles.css`, because their own stylesheets assume a dark background and white text.
+- **Visual theme ("Candy Pop")**: light pastel background, white cards with 3px dark outline and a hard offset shadow that "presses" on click, playful colors per class button. Game pages (`games/*/`) keep the original dark theme via a `body:has(.game-container)` override block in `styles.css`, because their own stylesheets assume a dark background and white text.
+- **Theme system (age levels)**: `data-theme` attribute on `<html>` switches the whole look. Registry lives in `background.js` (`THEMES`): each theme has a label/icon for the switcher, a sticker pool, sticker counts per breakpoint, an animation-duration multiplier and the `grades` it is auto-applied for. CSS side: a `html[data-theme="<name>"]` block in `styles.css` overrides the `:root` variables (`--ink` outlines, `--text`/`--text-soft` text, `--paper` cards, `--bg-*`, palette) plus a few component tweaks. Text color must use `--text`, never `--ink` (that is for outlines/shadows) so dark themes work.
+  - `candy` (default, no attribute) — level 1, grades 5-6.
+  - `cosmos` — level 2, grades 7-9 for now (level 3 "Neon" for 8-9 is planned): dark navy space, two star layers instead of polka dots, neon 3-color logo with pure glow (no stroke/hard shadow), 16 space stickers with 1.6× slower animations. Components use a HUD ("cockpit panel") language that matches the squared Russo One font: 3px radius, 1px neon outline, 3px solid accent bar on the left edge, L-shaped corner brackets (`::before` top-right / `::after` bottom-right), dark frosted-glass fill (`--hud-bg` + `backdrop-filter`). Every button/panel takes its accent as an RGB triplet in `--c` (per class button, per rules section, per game category); neutral panels use `--hud-line`. Hover = brighter fill + stronger glow + 2px lift, no tilt. Category titles are uppercase outlined tags; list bullets are glowing rotated squares. Rounded pills, gradients and thick borders are avoided in this theme. Own fonts via `--font-head: 'Russo One'` (single weight 400 — the theme forces `font-weight: 400` on heading/button elements to avoid faux bold) and `--font-body: 'Exo 2'`; both have Cyrillic. All theme fonts are loaded from one Google Fonts link in the three main pages.
+  - Switcher: round emoji buttons fixed top-right (`.theme-switcher`, built by JS on the three main pages, not in games). Manual choice is saved in `localStorage["siteTheme"]` as `{theme, day}` and valid for the current day only (classroom PCs are shared).
+  - Auto-hint: clicking a class button applies the theme for that grade without saving; closing the code modal without logging in restores the saved theme (MutationObserver on `#code-modal`).
 
 ## Development
 
@@ -25,7 +30,9 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 ├── index.html                      # Main page - class selection
 ├── rules.html                      # Rules page - classroom behavior rules
 ├── games.html                      # Games hub - list of training games
-├── styles.css                      # Shared styles for all pages
+├── styles.css                      # Shared styles for all pages (+ theme blocks)
+├── background.js                   # Themes, switcher, logo letters, background stickers
+├── theme-init.js                   # Applies saved theme before first paint
 ├── games/
 │   ├── Skhodynky_Setup.exe         # Installer of "Сходинки до інформатики" (downloadable from games.html)
 │   ├── mouse-click/                # "Лопни кульку" game
@@ -214,7 +221,8 @@ games/[game-name]/
 
 ## Ideas Backlog
 
-### Mood-based themes (discussed 2026-09-07, not started)
+### Age-level themes (started 2026-09-17: theme system + level 2 "cosmos" done; level 3 "neon"/"retro-pixel" for grades 8-9 and optional level-1 sibling "ocean" still to do)
+Original mood-based idea below; it evolved into age levels named by style, not by age.
 Let a student pick a "mood" on the main page and switch the whole site to a matching theme.
 
 Agreed shape:
