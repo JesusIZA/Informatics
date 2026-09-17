@@ -1,12 +1,12 @@
-// Застосовує збережену тему ще до першого рендеру сторінки,
-// щоб не було миготіння базової теми. Логіка тем — у background.js.
+// Застосовує тему ще до першого рендеру сторінки, щоб не було миготіння.
+// Збережений у браузері вибір має пріоритет; інакше — типова тема "retro".
+// Логіка тем і перемикач — у background.js.
 (function () {
+  var DEFAULT_THEME = 'retro';
+  var theme = DEFAULT_THEME;
   try {
-    var raw = localStorage.getItem('siteTheme');
-    if (!raw) return;
-    var saved = JSON.parse(raw);
-    if (saved && saved.theme && saved.day === new Date().toDateString()) {
-      document.documentElement.setAttribute('data-theme', saved.theme);
-    }
-  } catch (e) { /* localStorage недоступний — лишаємо базову тему */ }
+    var saved = JSON.parse(localStorage.getItem('siteTheme') || 'null');
+    if (saved && typeof saved.theme === 'string' && saved.theme) theme = saved.theme;
+  } catch (e) { /* localStorage недоступний — лишаємо типову тему */ }
+  document.documentElement.setAttribute('data-theme', theme);
 })();

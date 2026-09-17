@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Інформатика - Матеріали</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23667eea'/%3E%3Cstop offset='100%25' stop-color='%23f093fb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23g)'/%3E%3Ctext x='50' y='72' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EІ%3C/text%3E%3C/svg%3E">
-  <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=Nunito:wght@600;700;800&family=Inter:wght@400;600;700&family=Russo+One&family=Exo+2:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=Nunito:wght@600;700;800&family=Inter:wght@400;600;700&family=Russo+One&family=Exo+2:wght@500;600;700&family=Press+Start+2P&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="theme-init.js"></script>
 </head>
@@ -49,9 +49,17 @@
 
   <!-- Overlay успішного входу - кольорова шторка та папка -->
   <div id="success-overlay" class="success-overlay">
+    <!-- Цукерки: кольорова шторка -->
     <div class="wipe">
       <span class="wipe-stripe"></span><span class="wipe-stripe"></span><span class="wipe-stripe"></span>
       <span class="wipe-stripe"></span><span class="wipe-stripe"></span><span class="wipe-stripe"></span>
+    </div>
+    <!-- Космос: стрибок у гіперпростір (смуги зірок) -->
+    <div class="warp" aria-hidden="true"></div>
+    <!-- Ретро: піксельна смуга завантаження -->
+    <div class="pixel-loader" aria-hidden="true">
+      <div class="pixel-bar"><span></span></div>
+      <div class="pixel-caption">ЗАВАНТАЖЕННЯ<span class="pixel-dots"></span></div>
     </div>
     <div class="success-card">
       <span class="success-icon">📂</span>
@@ -200,8 +208,9 @@
       50% { transform: scale(1); opacity: 1; }
     }
 
-    /* Success overlay: colored curtain wipe + folder card */
+    /* Success overlay: colored curtain wipe + folder card (theme variants in styles.css) */
     .success-overlay {
+      --success-duration: 800ms;
       display: none;
       position: fixed;
       top: 0;
@@ -363,9 +372,11 @@
       modal.classList.remove('active');
       successOverlay.classList.add('active');
 
+      // Тривалість анімації задає тема через CSS-змінну --success-duration
+      const duration = parseInt(getComputedStyle(successOverlay).getPropertyValue('--success-duration'), 10) || 800;
       setTimeout(() => {
         window.location.href = link;
-      }, 800);
+      }, duration);
     }
 
     // Перевірити код

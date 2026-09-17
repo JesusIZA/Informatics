@@ -1,8 +1,8 @@
 // ===== ТЕМИ, ЛОГОТИП І ФОНОВІ СТІКЕРИ =====
 // 1. Теми: атрибут data-theme на <html> перемикає палітру (styles.css),
-//    пул стікерів і темп їхніх анімацій. Вибір зберігається на день у localStorage
-//    (theme-init.js застосовує його до першого рендеру). При натисканні кнопки
-//    класу тема тимчасово перемикається під вік класу (без збереження).
+//    пул стікерів і темп їхніх анімацій. Типова тема — "retro"; ручний вибір
+//    зберігається в localStorage назавжди (theme-init.js застосовує його до
+//    першого рендеру). Перемикається лише вручну.
 // 2. Логотип: заголовок h1.logo розбивається на літери для окремого стилю кожної.
 // 3. Стікери: екран ділиться на сітку клітинок, у кожну потрапляє один емодзі
 //    зі випадковим зсувом — розподіл рівномірний, позиції щоразу різні.
@@ -11,16 +11,48 @@
   'use strict';
 
   const STORAGE_KEY = 'siteTheme';
-  const DEFAULT_THEME = 'candy';
+  const DEFAULT_THEME = 'retro'; // типова тема; ручний вибір зберігається в браузері назавжди
+
+  // ----- Іконки перемикача тем -----
+  // Кожна тема має три варіанти своєї іконки; який саме показувати,
+  // вирішує iconStyle АКТИВНОЇ теми (у "Цукерках" — емодзі-стікери,
+  // у "Космосі" — тонкі контурні лінії, у "Ретро" — піксельні).
+  const svg = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+  const px = (inner) => '<svg viewBox="0 0 16 16" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true">' + inner + '</svg>';
+
+  const ICONS = {
+    candy: {
+      sticker: '🍬',
+      // цукерка у фантику з хвостиками і смужками
+      line: svg('<ellipse cx="12" cy="12" rx="5" ry="4"/><path d="M7 12 3 8.5l.6 3.5L3 15.5 7 12zM17 12l4-3.5-.6 3.5.6 3.5L17 12z"/><path d="M10.5 8.4 9 15.6M13.5 8.4 12 15.6"/>'),
+      // піксельний льодяник
+      pixel: px('<rect x="5" y="1" width="6" height="1"/><rect x="4" y="2" width="8" height="1"/><rect x="3" y="3" width="10" height="5"/><rect x="4" y="8" width="8" height="1"/><rect x="5" y="9" width="6" height="1"/><rect x="7" y="10" width="2" height="5"/><rect x="6" y="4" width="2" height="2" fill="#000" opacity=".35"/><rect x="9" y="5" width="2" height="2" fill="#000" opacity=".35"/>')
+    },
+    cosmos: {
+      sticker: '🪐',
+      // планета з кільцем
+      line: svg('<circle cx="12" cy="12" r="5.5"/><path d="M3.5 14.5c3.5 3.2 12.5 1.6 17-2.6M20.5 9.5c-1-1.1-2.6-1.8-4.4-2.1M3.5 14.5c-.9-1.2-.5-2.3.7-3.2"/>'),
+      // піксельна планета з кільцем по діагоналі
+      pixel: px('<rect x="6" y="3" width="4" height="1"/><rect x="5" y="4" width="6" height="1"/><rect x="4" y="5" width="8" height="1"/><rect x="4" y="6" width="8" height="1"/><rect x="4" y="7" width="8" height="1"/><rect x="4" y="8" width="8" height="1"/><rect x="4" y="9" width="8" height="1"/><rect x="4" y="10" width="8" height="1"/><rect x="5" y="11" width="6" height="1"/><rect x="6" y="12" width="4" height="1"/><rect x="0" y="10" width="2" height="1" opacity=".7"/><rect x="1" y="9" width="3" height="1" opacity=".7"/><rect x="12" y="6" width="3" height="1" opacity=".7"/><rect x="14" y="5" width="2" height="1" opacity=".7"/><rect x="3" y="9" width="10" height="1" fill="#000" opacity=".45"/>')
+    },
+    retro: {
+      sticker: '👾',
+      // геймпад
+      line: svg('<path d="M7 8h10a4 4 0 0 1 4 4v1.5a3.5 3.5 0 0 1-6.3 2.1L14 14h-4l-.7 1.6A3.5 3.5 0 0 1 3 13.5V12a4 4 0 0 1 4-4z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="16" cy="11.5" r=".8" fill="currentColor"/><circle cx="18" cy="13.5" r=".8" fill="currentColor"/>'),
+      // піксельний прибулець
+      pixel: px('<rect x="5" y="2" width="1" height="1"/><rect x="10" y="2" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="9" y="3" width="1" height="1"/><rect x="5" y="4" width="6" height="1"/><rect x="4" y="5" width="8" height="1"/><rect x="3" y="6" width="10" height="1"/><rect x="2" y="7" width="12" height="2"/><rect x="2" y="9" width="1" height="2"/><rect x="13" y="9" width="1" height="2"/><rect x="4" y="9" width="8" height="1"/><rect x="5" y="10" width="2" height="1"/><rect x="9" y="10" width="2" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="11" y="11" width="1" height="1"/><rect x="5" y="6" width="2" height="1" fill="#000" opacity=".45"/><rect x="9" y="6" width="2" height="1" fill="#000" opacity=".45"/>')
+    }
+  };
 
   // ----- Реєстр тем -----
+  // iconStyle: у якому стилі малювати іконки перемикача, коли ця тема активна
   // count: кількість стікерів [телефон, планшет, комп'ютер]
   // durScale: множник тривалості анімацій (більше = спокійніше)
-  // grades: класи, для яких тема вмикається автоматично при натисканні кнопки класу
+  // grades: для яких класів тема задумана (довідково; тема перемикається лише вручну)
   const THEMES = {
     candy: {
       label: 'Цукерки',
-      icon: '🍬',
+      iconStyle: 'sticker',
       grades: [5, 6],
       count: [10, 18, 28],
       durScale: 1,
@@ -57,8 +89,8 @@
     },
     cosmos: {
       label: 'Космос',
-      icon: '🪐',
-      grades: [7, 8, 9], // поки немає теми 3-го рівня, старші класи теж отримують Космос
+      iconStyle: 'line',
+      grades: [7],
       count: [6, 12, 16],
       durScale: 1.6,
       stickers: [
@@ -77,6 +109,30 @@
         { emoji: '💫', anim: 'stk-pulse' },
         { emoji: '✨', anim: 'stk-flash' },
         { emoji: '🌠', anim: 'stk-magnet' },
+        { emoji: '🤖', anim: 'stk-robot' }
+      ]
+    },
+    retro: {
+      label: 'Ретро',
+      iconStyle: 'pixel',
+      grades: [8, 9],
+      count: [6, 10, 14],
+      durScale: 1.2, // анімації в CSS теми йдуть кадрами (steps), тому трохи повільніше
+      pixelate: 18,  // емодзі малюються на полотні 18×18 точок і розтягуються без згладжування
+      stickers: [
+        { emoji: '👾', anim: 'stk-hop' },
+        { emoji: '🕹️', anim: 'stk-joystick' },
+        { emoji: '👻', anim: 'stk-hover' },
+        { emoji: '💾', anim: 'stk-flip' },
+        { emoji: '📼', anim: 'stk-slide' },
+        { emoji: '🎮', anim: 'stk-rumble' },
+        { emoji: '💿', anim: 'stk-spin' },
+        { emoji: '🪙', anim: 'stk-twinkle' },
+        { emoji: '🍄', anim: 'stk-bob' },
+        { emoji: '⭐', anim: 'stk-pulse' },
+        { emoji: '💣', anim: 'stk-wobble' },
+        { emoji: '🧱', anim: 'stk-breathe' },
+        { emoji: '📺', anim: 'stk-flash' },
         { emoji: '🤖', anim: 'stk-robot' }
       ]
     }
@@ -99,22 +155,13 @@
     return THEMES[t] ? t : DEFAULT_THEME;
   }
 
-  function savedTheme() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-      if (saved && THEMES[saved.theme] && saved.day === new Date().toDateString()) return saved.theme;
-    } catch (e) { /* ignore */ }
-    return DEFAULT_THEME;
-  }
-
   function applyTheme(name, options) {
     const opts = options || {};
     if (!THEMES[name] || name === currentTheme()) {
       if (opts.persist) persistTheme(name);
       return;
     }
-    if (name === DEFAULT_THEME) root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', name);
+    root.setAttribute('data-theme', name);
     if (opts.persist) persistTheme(name);
     renderStickers();
     updateSwitcher();
@@ -122,16 +169,12 @@
 
   function persistTheme(name) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ theme: name, day: new Date().toDateString() }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ theme: name }));
     } catch (e) { /* ignore */ }
   }
 
-  function themeForGrade(grade) {
-    for (const key of Object.keys(THEMES)) {
-      if (THEMES[key].grades.includes(grade)) return key;
-    }
-    return DEFAULT_THEME;
-  }
+  // Якщо theme-init.js не спрацював (або тема невідома) — ставимо типову
+  if (!THEMES[root.getAttribute('data-theme')]) root.setAttribute('data-theme', DEFAULT_THEME);
 
   // ----- Перемикач тем (кнопки-стікери у правому верхньому куті) -----
   let switcher = null;
@@ -148,7 +191,6 @@
       btn.dataset.theme = key;
       btn.title = THEMES[key].label;
       btn.setAttribute('aria-label', 'Тема: ' + THEMES[key].label);
-      btn.textContent = THEMES[key].icon;
       btn.addEventListener('click', () => {
         switcher.classList.add('is-switching');
         root.classList.add('theme-fade');
@@ -167,32 +209,21 @@
   function updateSwitcher() {
     if (!switcher) return;
     const active = currentTheme();
+    const style = THEMES[active].iconStyle || 'sticker';
+    switcher.dataset.iconStyle = style;
     switcher.querySelectorAll('.theme-btn').forEach(btn => {
-      const on = btn.dataset.theme === active;
+      const key = btn.dataset.theme;
+      const on = key === active;
       btn.classList.toggle('is-active', on);
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      // Іконка кожної кнопки малюється у стилі активної теми
+      const icon = (ICONS[key] && ICONS[key][style]) || (ICONS[key] && ICONS[key].sticker) || '';
+      if (btn.dataset.iconStyle !== style) {
+        btn.dataset.iconStyle = style;
+        if (style === 'sticker') btn.textContent = icon;
+        else btn.innerHTML = icon;
+      }
     });
-  }
-
-  // ----- Авто-тема за класом (лише на головній) -----
-  function bindClassButtons() {
-    const modal = document.getElementById('code-modal');
-    document.querySelectorAll('.class-btn[data-class]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const grade = parseInt(btn.dataset.class, 10);
-        if (!isNaN(grade)) applyTheme(themeForGrade(grade), { persist: false });
-      });
-    });
-    // Якщо вікно з кодом закрили без входу — повернути збережену тему
-    if (modal) {
-      new MutationObserver(() => {
-        const overlay = document.getElementById('success-overlay');
-        const redirecting = overlay && overlay.classList.contains('active');
-        if (!modal.classList.contains('active') && !redirecting) {
-          applyTheme(savedTheme(), { persist: false });
-        }
-      }).observe(modal, { attributes: true, attributeFilter: ['class'] });
-    }
   }
 
   // ----- Логотип: розбити заголовок на літери -----
@@ -215,8 +246,52 @@
   const host = document.querySelector('.shapes');
   if (!host || document.querySelector('.game-container')) return;
 
+  // Піксельна версія емодзі: гліф малюється на крихітному полотні (grid × grid),
+  // а CSS розтягує його з image-rendering: pixelated — виходить піксель-арт.
+  const pixelCache = new Map();
+  function pixelEmoji(emoji, grid) {
+    const key = emoji + '@' + grid;
+    let src = pixelCache.get(key);
+    if (!src) {
+      const c = document.createElement('canvas');
+      c.width = c.height = grid;
+      const ctx = c.getContext('2d');
+      ctx.font = Math.round(grid * 0.82) + 'px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(emoji, grid / 2, grid / 2 + grid * 0.06);
+      src = c.toDataURL();
+      pixelCache.set(key, src);
+    }
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    img.draggable = false;
+    return img;
+  }
+
+  // Емодзі в інтерфейсі (іконки ігор, папка в анімації входу): у піксельній темі
+  // замінюються на піксель-арт, в інших темах повертається звичайний гліф.
+  function applyPixelIcons(theme) {
+    document.querySelectorAll('.game-icon, .success-icon').forEach(el => {
+      if (theme.pixelate) {
+        if (el.classList.contains('is-pixel')) return;
+        const emoji = el.textContent.trim();
+        if (!emoji) return;
+        el.dataset.emoji = emoji;
+        el.textContent = '';
+        el.appendChild(pixelEmoji(emoji, theme.pixelate));
+        el.classList.add('is-pixel');
+      } else if (el.classList.contains('is-pixel')) {
+        el.textContent = el.dataset.emoji || '';
+        el.classList.remove('is-pixel');
+      }
+    });
+  }
+
   function renderStickers() {
     const theme = THEMES[currentTheme()];
+    applyPixelIcons(theme);
     const W = window.innerWidth;
     const H = window.innerHeight;
 
@@ -241,7 +316,12 @@
       const sticker = pool[i % pool.length];
       const el = document.createElement('span');
       el.className = 'sticker ' + sticker.anim;
-      el.textContent = sticker.emoji;
+      if (theme.pixelate) {
+        el.classList.add('sticker-pixel');
+        el.appendChild(pixelEmoji(sticker.emoji, theme.pixelate));
+      } else {
+        el.textContent = sticker.emoji;
+      }
       el.setAttribute('aria-hidden', 'true');
 
       // Випадковий зсув у межах клітинки (з відступом від її країв)
@@ -263,7 +343,6 @@
 
   renderStickers();
   buildSwitcher();
-  bindClassButtons();
 
   // Перебудувати при суттєвій зміні розміру вікна (поворот екрана тощо)
   let resizeTimer = null;

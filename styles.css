@@ -938,7 +938,7 @@ body:has(.game-container) h1::after { display: none; }
 .theme-btn.is-active {
   opacity: 1;
   transform: translateY(3px);
-  box-shadow: 0 1px 0 var(--ink), 0 0 0 3px var(--sky);
+  box-shadow: 0 1px 0 var(--ink), 0 0 0 2px rgba(43, 35, 80, 0.22);
   cursor: default;
 }
 
@@ -946,6 +946,15 @@ body:has(.game-container) h1::after { display: none; }
   outline: 3px solid var(--sky);
   outline-offset: 2px;
 }
+
+/* SVG-іконки (контурні та піксельні варіанти) */
+.theme-btn svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+}
+.theme-switcher[data-icon-style="pixel"] .theme-btn svg { width: 22px; height: 22px; }
 
 /* Коротке затемнення при ручному перемиканні теми */
 body { transition: opacity 0.22s ease; }
@@ -971,15 +980,16 @@ html[data-theme="cosmos"] {
   --bg-2: #141a4a;
   --bg-3: #0e2a4d;
 
-  --coral: #ff5c8a;
-  --tangerine: #ff8e3c;
-  --sunflower: #ffd166;
-  --lime: #9cff57;
-  --mint: #2ee6a6;
+  /* Холодна палітра: лише бірюза → синій → фіолет, без теплих кольорів */
+  --coral: #ff5c8a;      /* єдиний "теплий" — для заборон і помилок */
+  --tangerine: #818cf8;
+  --sunflower: #a5b4fc;
+  --lime: #67e8f9;
+  --mint: #38e0c8;
   --aqua: #22d3ee;
   --sky: #4f8dff;
   --grape: #8b5cf6;
-  --bubblegum: #f472b6;
+  --bubblegum: #a78bfa;
 
   /* Шрифти теми: техно-гротеск для заголовків, футуристичний Exo 2 для тексту */
   --font-head: 'Russo One', 'Exo 2', system-ui, sans-serif;
@@ -1057,7 +1067,7 @@ html[data-theme="cosmos"] h1 {
     0 0 16px rgba(10, 13, 38, 0.9);
 }
 html[data-theme="cosmos"] h1::after {
-  background: linear-gradient(90deg, var(--aqua), var(--grape), var(--bubblegum));
+  background: linear-gradient(90deg, #67e8f9, #4f8dff, #a78bfa);
   box-shadow: 0 0 14px rgba(139, 92, 246, 0.6);
 }
 
@@ -1069,9 +1079,18 @@ html[data-theme="cosmos"] .logo-letter {
     0 2px 0 rgba(10, 13, 38, 0.85),
     0 0 18px var(--letter-glow, rgba(139, 92, 246, 0.55));
 }
-html[data-theme="cosmos"] .logo-letter:nth-child(3n + 1) { --letter: var(--aqua);      --letter-glow: rgba(34, 211, 238, 0.5); }
-html[data-theme="cosmos"] .logo-letter:nth-child(3n + 2) { --letter: var(--grape);     --letter-glow: rgba(139, 92, 246, 0.6); }
-html[data-theme="cosmos"] .logo-letter:nth-child(3n)     { --letter: var(--bubblegum); --letter-glow: rgba(244, 114, 182, 0.5); }
+/* Літери плавно переходять від бірюзи до фіолету зліва направо */
+html[data-theme="cosmos"] .logo-letter:nth-child(1),
+html[data-theme="cosmos"] .logo-letter:nth-child(2)  { --letter: #67e8f9; --letter-glow: rgba(103, 232, 249, 0.5); }
+html[data-theme="cosmos"] .logo-letter:nth-child(3),
+html[data-theme="cosmos"] .logo-letter:nth-child(4)  { --letter: #22d3ee; --letter-glow: rgba(34, 211, 238, 0.5); }
+html[data-theme="cosmos"] .logo-letter:nth-child(5),
+html[data-theme="cosmos"] .logo-letter:nth-child(6)  { --letter: #60a5fa; --letter-glow: rgba(96, 165, 250, 0.55); }
+html[data-theme="cosmos"] .logo-letter:nth-child(7),
+html[data-theme="cosmos"] .logo-letter:nth-child(8)  { --letter: #818cf8; --letter-glow: rgba(129, 140, 248, 0.55); }
+html[data-theme="cosmos"] .logo-letter:nth-child(9),
+html[data-theme="cosmos"] .logo-letter:nth-child(10) { --letter: #a78bfa; --letter-glow: rgba(167, 139, 250, 0.55); }
+html[data-theme="cosmos"] .logo-letter:nth-child(11) { --letter: #c4b5fd; --letter-glow: rgba(196, 181, 253, 0.55); }
 
 /* Розділювачі між колонками класів */
 html[data-theme="cosmos"] .classes::before,
@@ -1193,15 +1212,16 @@ html[data-theme="cosmos"] .class-btn {
   padding: 22px 14px 22px 22px;
   overflow: visible;
 }
-html[data-theme="cosmos"] .class-btn:nth-child(1) { --c: 99, 125, 255; }
-html[data-theme="cosmos"] .class-btn:nth-child(2) { --c: 155, 110, 255; }
-html[data-theme="cosmos"] .class-btn:nth-child(3) { --c: 217, 90, 240; color: #fff; }
-html[data-theme="cosmos"] .class-btn:nth-child(4) { --c: 46, 220, 190; }
-html[data-theme="cosmos"] .class-btn:nth-child(5) { --c: 34, 211, 238; }
-html[data-theme="cosmos"] .class-btn:nth-child(6) { --c: 80, 150, 255; }
-html[data-theme="cosmos"] .class-btn:nth-child(7) { --c: 140, 80, 255; }
-html[data-theme="cosmos"] .class-btn:nth-child(8) { --c: 240, 90, 160; }
-html[data-theme="cosmos"] .class-btn:nth-child(9) { --c: 60, 230, 150; color: #fff; }
+/* Колонка 5-х — бірюза, 6-х — синій, старші — фіолет; відтінок темніє донизу */
+html[data-theme="cosmos"] .class-btn:nth-child(1) { --c: 103, 232, 249; }
+html[data-theme="cosmos"] .class-btn:nth-child(2) { --c: 34, 211, 238; }
+html[data-theme="cosmos"] .class-btn:nth-child(3) { --c: 6, 182, 212; color: #fff; }
+html[data-theme="cosmos"] .class-btn:nth-child(4) { --c: 96, 165, 250; }
+html[data-theme="cosmos"] .class-btn:nth-child(5) { --c: 79, 141, 255; }
+html[data-theme="cosmos"] .class-btn:nth-child(6) { --c: 99, 102, 241; }
+html[data-theme="cosmos"] .class-btn:nth-child(7) { --c: 167, 139, 250; }
+html[data-theme="cosmos"] .class-btn:nth-child(8) { --c: 139, 92, 246; }
+html[data-theme="cosmos"] .class-btn:nth-child(9) { --c: 124, 58, 237; color: #fff; }
 
 /* --- Кнопки "Ігри-тренажери", "Правила", "Назад" --- */
 html[data-theme="cosmos"] .rules-btn.games-btn {
@@ -1221,10 +1241,10 @@ html[data-theme="cosmos"] .back-btn {
 
 /* --- Секції правил: колір панелі за типом секції --- */
 html[data-theme="cosmos"] .rules-section::before { display: none; } /* смугу дає border-left */
-html[data-theme="cosmos"] .rules-section.entry     { --c: 80, 150, 255; }
-html[data-theme="cosmos"] .rules-section.forbidden { --c: 255, 92, 138; }
-html[data-theme="cosmos"] .rules-section.work      { --c: 46, 230, 166; }
-html[data-theme="cosmos"] .rules-section.problems  { --c: 255, 142, 60; }
+html[data-theme="cosmos"] .rules-section.entry     { --c: 34, 211, 238; }
+html[data-theme="cosmos"] .rules-section.forbidden { --c: 255, 92, 138; }  /* попередження — єдиний теплий колір */
+html[data-theme="cosmos"] .rules-section.work      { --c: 79, 141, 255; }
+html[data-theme="cosmos"] .rules-section.problems  { --c: 167, 139, 250; }
 html[data-theme="cosmos"] .rules-section h2 { color: rgb(var(--c)); text-shadow: 0 0 12px rgba(var(--c), 0.6); letter-spacing: 0.04em; }
 html[data-theme="cosmos"] .rules-section li { border-bottom: 1px solid rgba(var(--c), 0.18); }
 html[data-theme="cosmos"] .rules-section li::before {
@@ -1253,14 +1273,14 @@ html[data-theme="cosmos"] .category-title {
   padding: 6px 14px;
 }
 html[data-theme="cosmos"] .category-title.category-mouse    { --c: 34, 211, 238; }
-html[data-theme="cosmos"] .category-title.category-keyboard { --c: 46, 230, 166; }
-html[data-theme="cosmos"] .category-title.category-logic    { --c: 180, 140, 255; }
-html[data-theme="cosmos"] .category-title.category-external { --c: 255, 92, 138; }
+html[data-theme="cosmos"] .category-title.category-keyboard { --c: 79, 141, 255; }
+html[data-theme="cosmos"] .category-title.category-logic    { --c: 167, 139, 250; }
+html[data-theme="cosmos"] .category-title.category-external { --c: 196, 181, 253; }
 
 html[data-theme="cosmos"] .game-card-mouse    { --c: 34, 211, 238; }
-html[data-theme="cosmos"] .game-card-keyboard { --c: 46, 230, 166; }
-html[data-theme="cosmos"] .game-card-logic    { --c: 180, 140, 255; }
-html[data-theme="cosmos"] .game-card-external { --c: 255, 92, 138; }
+html[data-theme="cosmos"] .game-card-keyboard { --c: 79, 141, 255; }
+html[data-theme="cosmos"] .game-card-logic    { --c: 167, 139, 250; }
+html[data-theme="cosmos"] .game-card-external { --c: 196, 181, 253; }
 
 html[data-theme="cosmos"] .game-icon,
 html[data-theme="cosmos"] .game-card-mouse .game-icon,
@@ -1313,10 +1333,17 @@ html[data-theme="cosmos"] .theme-btn:hover {
   border-color: rgba(34, 211, 238, 0.8);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(34, 211, 238, 0.3);
 }
+/* Контурні іконки: нейтральна лінія; активна — бірюзова, лише з ледь помітною рамкою */
+html[data-theme="cosmos"] .theme-btn {
+  color: rgba(var(--hud-line), 0.85);
+  opacity: 1;
+}
+html[data-theme="cosmos"] .theme-btn:hover { color: #fff; }
 html[data-theme="cosmos"] .theme-btn.is-active {
   transform: none;
-  border-color: var(--aqua);
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.4), 0 0 18px rgba(34, 211, 238, 0.6);
+  color: var(--aqua);
+  border-color: rgba(34, 211, 238, 0.55);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 8px rgba(34, 211, 238, 0.18);
 }
 
 /* --- Модальне вікно з кодом та картка успіху --- */
@@ -1353,3 +1380,528 @@ html[data-theme="cosmos"] .modal-btn.submit {
 }
 html[data-theme="cosmos"] .modal-btn:hover { transform: translateY(-2px); border-color: rgb(var(--c)); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 18px rgba(var(--c), 0.35); }
 html[data-theme="cosmos"] .modal-btn:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); }
+
+/* =====================================================================
+   ТЕМА "РЕТРО-ПІКСЕЛЬ" — рівень 3 (8-9 клас)
+   8-бітна гра: прямі кути, товсті рамки, "піксельні" тіні зі зсувом
+   по діагоналі, обмежена палітра приставки, анімації кадрами (steps).
+   Вмикається атрибутом data-theme="retro" на <html>.
+   ===================================================================== */
+html[data-theme="retro"] {
+  --ink: #0d0819;
+  --ink-soft: #8f86c4;
+  --text: #f4f1ff;
+  --text-soft: #b9b1dc;
+  --paper: #241a4a;
+  --bg-1: #1a1236;
+  --bg-2: #22164a;
+  --bg-3: #140f2b;
+
+  /* Обмежена палітра аркади: маджента, ціан, жовтий (+ білий і темний фон) */
+  --coral: #ff3fd2;
+  --tangerine: #ffe14d;
+  --sunflower: #ffe14d;
+  --lime: #00e5ff;
+  --mint: #00e5ff;
+  --aqua: #00e5ff;
+  --sky: #00b8d4;
+  --grape: #c026d3;
+  --bubblegum: #ff3fd2;
+
+  --font-head: 'Press Start 2P', 'IBM Plex Mono', monospace;
+  --font-body: 'IBM Plex Mono', 'Nunito', monospace;
+
+  --px-frame: #6f62b8;                    /* колір рамок панелей */
+  --px-shadow: 5px 5px 0 var(--ink);      /* піксельна тінь зі зсувом */
+  --px-shadow-hover: 8px 8px 0 var(--ink);
+  --px-shadow-active: 2px 2px 0 var(--ink);
+}
+
+/* Press Start 2P має одну вагу і виглядає великим — зменшуємо кеглі */
+html[data-theme="retro"] :is(h1, .logo-letter, .class-btn, .rules-btn, .back-btn,
+  .category-title, .game-info h3, .rules-section h2, .coming-soon-badge, .external-badge,
+  .modal-content h2, .modal-btn) {
+  font-weight: 400;
+  text-transform: none;
+}
+html[data-theme="retro"] body { font-weight: 500; font-size: 15px; }
+html[data-theme="retro"] .subtitle { font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sunflower); }
+
+/* Фон: темно-фіолетовий + піксельна сітка + легкі "сканлайни" ЕПТ */
+html[data-theme="retro"] body {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(178, 60, 255, 0.28), transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(0, 229, 255, 0.16), transparent 50%),
+    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 60%, var(--bg-3) 100%);
+}
+html[data-theme="retro"] body::before {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 2px, transparent 2px 5px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 5px, 24px 24px, 24px 24px;
+  mask-image: none;
+  -webkit-mask-image: none;
+  opacity: 1;
+}
+
+/* Стікери: піксельні емодзі (полотно, розтягнуте без згладжування), різкі тіні, рух кадрами */
+html[data-theme="retro"] .sticker {
+  opacity: 0.38;
+  rotate: 0deg; /* повернутий піксель-арт виглядає неприродно */
+  filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.55)) saturate(1.2);
+  animation-timing-function: steps(5, jump-none);
+}
+.sticker-pixel img {
+  display: block;
+  width: var(--size, 56px);
+  height: var(--size, 56px);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Піксельні іконки в інтерфейсі (іконки ігор, папка при вході) */
+.game-icon.is-pixel img,
+.success-icon.is-pixel img {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.game-icon.is-pixel img { width: 36px; height: 36px; }
+.success-icon.is-pixel img { width: 96px; height: 96px; }
+
+/* Заголовки */
+html[data-theme="retro"] h1 {
+  font-size: 1.5rem;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-shadow: 3px 3px 0 var(--ink);
+}
+html[data-theme="retro"] h1.rules-title { font-size: 1.35rem; margin-bottom: 36px; }
+html[data-theme="retro"] h1::after {
+  height: 6px;
+  width: 220px;
+  border-radius: 0;
+  transform: none;
+  margin-top: 14px;
+  background: repeating-linear-gradient(90deg,
+    #ff3fd2 0 22px, #00e5ff 22px 44px, #ffe14d 44px 66px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* Логотип: рівні піксельні літери у 4 кольорах приставки */
+html[data-theme="retro"] h1.logo {
+  font-size: 2.6rem;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  padding-top: 18px;
+  margin-bottom: 22px;
+}
+html[data-theme="retro"] .logo-letter {
+  --tilt: 0deg;
+  --lift: 0px;
+  -webkit-text-stroke: 0;
+  text-shadow: 4px 4px 0 var(--ink);
+  animation-timing-function: steps(4, jump-none), steps(3, jump-none);
+}
+html[data-theme="retro"] .logo-letter:hover { transform: translateY(-6px); }
+html[data-theme="retro"] .logo-letter:nth-child(3n + 1) { --letter: #ff3fd2; }
+html[data-theme="retro"] .logo-letter:nth-child(3n + 2) { --letter: #00e5ff; }
+html[data-theme="retro"] .logo-letter:nth-child(3n)     { --letter: #ffe14d; }
+
+/* Розділювачі між колонками класів: пунктир "цеглинками" */
+html[data-theme="retro"] .classes::before,
+html[data-theme="retro"] .classes::after {
+  border-left: 4px dashed rgba(255, 255, 255, 0.22);
+}
+
+/* --- Спільна основа: прямі кути, товста рамка, піксельна тінь --- */
+html[data-theme="retro"] .class-btn,
+html[data-theme="retro"] .rules-btn,
+html[data-theme="retro"] .back-btn,
+html[data-theme="retro"] .rules-section,
+html[data-theme="retro"] .game-card,
+html[data-theme="retro"] .modal-content,
+html[data-theme="retro"] .success-card,
+html[data-theme="retro"] .theme-btn,
+html[data-theme="retro"] .category-title,
+html[data-theme="retro"] .game-icon,
+html[data-theme="retro"] .coming-soon-badge,
+html[data-theme="retro"] .external-badge,
+html[data-theme="retro"] #code-input,
+html[data-theme="retro"] .modal-btn {
+  border-radius: 0;
+}
+
+html[data-theme="retro"] .class-btn,
+html[data-theme="retro"] .rules-btn,
+html[data-theme="retro"] .back-btn,
+html[data-theme="retro"] .rules-section,
+html[data-theme="retro"] .game-card,
+html[data-theme="retro"] .modal-content,
+html[data-theme="retro"] .success-card {
+  border: 3px solid var(--px-frame);
+  background: var(--paper);
+  box-shadow: var(--px-shadow);
+  transition: transform 0.12s steps(2, jump-none), box-shadow 0.12s steps(2, jump-none), background 0.12s steps(2, jump-none);
+}
+
+html[data-theme="retro"] .rules-btn:hover,
+html[data-theme="retro"] .back-btn:hover,
+html[data-theme="retro"] .game-card:hover {
+  transform: translate(-3px, -3px);
+  border-color: var(--text);
+  box-shadow: var(--px-shadow-hover);
+}
+html[data-theme="retro"] .rules-btn:active,
+html[data-theme="retro"] .back-btn:active,
+html[data-theme="retro"] .game-card:active {
+  transform: translate(3px, 3px);
+  box-shadow: var(--px-shadow-active);
+}
+
+/* --- Кнопки класів: суцільна заливка кольором приставки --- */
+html[data-theme="retro"] .class-btn {
+  font-size: 1.05rem;
+  padding: 24px 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.35);
+  border-color: var(--text);
+  overflow: visible;
+}
+html[data-theme="retro"] .class-btn::before { display: none; }
+/* Колонка 5-х — маджента, 6-х — ціан, старші — жовтий; відтінок темніє донизу */
+html[data-theme="retro"] .class-btn:nth-child(1) { background: #ff3fd2; color: #fff; text-shadow: 2px 2px 0 var(--ink); }
+html[data-theme="retro"] .class-btn:nth-child(2) { background: #e11fb6; color: #fff; text-shadow: 2px 2px 0 var(--ink); }
+html[data-theme="retro"] .class-btn:nth-child(3) { background: #b8129a; color: #fff; text-shadow: 2px 2px 0 var(--ink); }
+html[data-theme="retro"] .class-btn:nth-child(4) { background: #00e5ff; }
+html[data-theme="retro"] .class-btn:nth-child(5) { background: #00c2dd; }
+html[data-theme="retro"] .class-btn:nth-child(6) { background: #0099b3; color: #fff; text-shadow: 2px 2px 0 var(--ink); }
+html[data-theme="retro"] .class-btn:nth-child(7) { background: #ffe14d; }
+html[data-theme="retro"] .class-btn:nth-child(8) { background: #f2c400; }
+html[data-theme="retro"] .class-btn:nth-child(9) { background: #d4a600; }
+
+html[data-theme="retro"] .class-btn:hover,
+html[data-theme="retro"] .class-btn:nth-child(even):hover {
+  transform: translate(-3px, -3px) rotate(0deg);
+  box-shadow: var(--px-shadow-hover);
+  filter: brightness(1.12);
+}
+html[data-theme="retro"] .class-btn:active,
+html[data-theme="retro"] .class-btn:nth-child(even):active {
+  transform: translate(3px, 3px) rotate(0deg);
+  box-shadow: var(--px-shadow-active);
+}
+
+/* --- Кнопки "Ігри-тренажери", "Правила", "Назад" --- */
+html[data-theme="retro"] .rules-btn,
+html[data-theme="retro"] .back-btn {
+  font-size: 0.8rem;
+  padding: 20px 16px;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+html[data-theme="retro"] .rules-btn.games-btn {
+  background: var(--grape);
+  border-color: var(--text);
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--ink);
+}
+/* Миготливий курсор ▶ перед написом, як у меню старої гри */
+html[data-theme="retro"] .rules-btn.games-btn::before {
+  content: '▶ ';
+  color: var(--sunflower);
+  animation: retro-blink 1s steps(1, end) infinite;
+}
+@keyframes retro-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* --- Секції правил --- */
+html[data-theme="retro"] .rules-section::before {
+  width: 10px;
+  box-shadow: none;
+}
+html[data-theme="retro"] .rules-section h2 {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  text-shadow: 2px 2px 0 var(--ink);
+}
+html[data-theme="retro"] .rules-section.entry h2 { color: #00e5ff; }
+html[data-theme="retro"] .rules-section.forbidden h2 { color: #ff3fd2; }
+html[data-theme="retro"] .rules-section.work h2 { color: #00e5ff; }
+html[data-theme="retro"] .rules-section.problems h2 { color: #ffe14d; }
+html[data-theme="retro"] .rules-section.entry::before,
+html[data-theme="retro"] .rules-section.entry li::before { background: #00e5ff; }
+html[data-theme="retro"] .rules-section.work::before,
+html[data-theme="retro"] .rules-section.work li::before { background: #00e5ff; opacity: 0.75; }
+html[data-theme="retro"] .rules-section li {
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.12);
+  font-size: 0.95rem;
+}
+html[data-theme="retro"] .rules-section li::before {
+  border: none;
+  border-radius: 0;
+  width: 10px;
+  height: 10px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* --- Сторінка ігор --- */
+html[data-theme="retro"] .category-title {
+  font-size: 0.7rem;
+  padding: 8px 14px;
+  border: 3px solid var(--ink);
+  color: var(--ink);
+  text-shadow: none;
+  box-shadow: 4px 4px 0 var(--ink);
+  transform: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+html[data-theme="retro"] .category-title.category-mouse    { background: #00e5ff; }
+html[data-theme="retro"] .category-title.category-keyboard { background: #ff3fd2; color: #fff; text-shadow: 2px 2px 0 var(--ink); }
+html[data-theme="retro"] .category-title.category-logic    { background: #ffe14d; }
+html[data-theme="retro"] .category-title.category-external { background: var(--text); }
+
+html[data-theme="retro"] .game-info h3 { font-size: 0.8rem; line-height: 1.6; margin-bottom: 4px; }
+html[data-theme="retro"] .game-info p { font-size: 0.9rem; }
+html[data-theme="retro"] .game-icon,
+html[data-theme="retro"] .game-card-mouse .game-icon,
+html[data-theme="retro"] .game-card-keyboard .game-icon,
+html[data-theme="retro"] .game-card-logic .game-icon,
+html[data-theme="retro"] .game-card-external .game-icon {
+  border: 3px solid var(--px-frame);
+  background: var(--ink);
+  box-shadow: none;
+}
+html[data-theme="retro"] .game-card.coming-soon { border-style: dashed; box-shadow: none; }
+html[data-theme="retro"] .coming-soon-badge,
+html[data-theme="retro"] .external-badge {
+  font-size: 0.6rem;
+  padding: 6px 10px;
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  transform: translateY(-50%);
+}
+html[data-theme="retro"] .coming-soon-badge { background: var(--sunflower); color: var(--ink); }
+html[data-theme="retro"] .external-badge { background: var(--coral); color: #fff; font-size: 0.9rem; }
+
+/* --- Перемикач тем: піксельні іконки --- */
+html[data-theme="retro"] .theme-btn {
+  border: 3px solid var(--px-frame);
+  background: var(--paper);
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--text-soft);
+  opacity: 1;
+  transition: transform 0.12s steps(2, jump-none), box-shadow 0.12s steps(2, jump-none);
+}
+html[data-theme="retro"] .theme-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+  color: var(--text);
+  border-color: var(--text);
+}
+html[data-theme="retro"] .theme-btn.is-active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+  border-color: #a99fd9;
+  color: var(--text);
+}
+
+/* --- Модальне вікно з кодом та картка успіху --- */
+html[data-theme="retro"] .modal-content h2 { font-size: 0.85rem; line-height: 1.6; }
+html[data-theme="retro"] #code-input {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 6px;
+  border: 3px solid var(--px-frame);
+  background: var(--ink);
+  color: var(--sunflower);
+  box-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.5);
+}
+html[data-theme="retro"] #code-input:focus {
+  border-color: var(--sunflower);
+  background: var(--ink);
+  box-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(255, 225, 77, 0.35);
+}
+html[data-theme="retro"] #code-input::placeholder { color: rgba(255, 225, 77, 0.35); }
+html[data-theme="retro"] .modal-btn {
+  font-size: 0.7rem;
+  padding: 14px 12px;
+  border: 3px solid var(--text);
+  box-shadow: 4px 4px 0 var(--ink);
+  color: var(--text);
+  background: var(--paper);
+  text-shadow: none;
+  transition: transform 0.12s steps(2, jump-none), box-shadow 0.12s steps(2, jump-none);
+}
+html[data-theme="retro"] .modal-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+html[data-theme="retro"] .modal-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+html[data-theme="retro"] .modal-btn.submit { background: var(--mint); color: var(--ink); }
+html[data-theme="retro"] .success-icon { filter: drop-shadow(4px 4px 0 var(--ink)); }
+
+@media (max-width: 500px) {
+  html[data-theme="retro"] h1.logo { font-size: 1.6rem; }
+  html[data-theme="retro"] .class-btn { font-size: 0.8rem; padding: 18px 4px; }
+  html[data-theme="retro"] h1 { font-size: 1.1rem; }
+}
+
+/* =====================================================================
+   АНІМАЦІЯ УСПІШНОГО ВХОДУ — варіанти за темами
+   Базова ("Цукерки"): кольорова шторка + картка з папкою (index.html).
+   Тривалість до редиректу задає --success-duration на .success-overlay.
+   ===================================================================== */
+.warp,
+.pixel-loader { display: none; }
+
+/* --- КОСМОС: стрибок у гіперпростір --- */
+html[data-theme="cosmos"] .success-overlay {
+  --success-duration: 1050ms;
+  background: #04061a;
+  animation: successFade 0.15s ease-out both;
+}
+html[data-theme="cosmos"] .wipe { display: none; }
+
+/* Смуги зірок: конічний повторюваний градієнт, обрізаний радіальною маскою,
+   розлітається від центру, ніби корабель прискорюється */
+html[data-theme="cosmos"] .warp {
+  display: block;
+  position: absolute;
+  inset: -60%;
+  background: repeating-conic-gradient(from 0deg,
+    rgba(225, 238, 255, 1) 0deg 0.7deg,
+    transparent 0.7deg 5deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 6%, #000 28%, #000 62%, transparent 88%);
+  mask-image: radial-gradient(circle, transparent 6%, #000 28%, #000 62%, transparent 88%);
+  animation: warpJump 1s cubic-bezier(0.25, 0.6, 0.2, 1) both;
+}
+html[data-theme="cosmos"] .warp::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(from 2.4deg,
+    rgba(34, 211, 238, 1) 0deg 0.45deg,
+    transparent 0.45deg 8.3deg);
+  animation: warpJump 1s cubic-bezier(0.3, 0.6, 0.2, 1) 0.08s both;
+}
+@keyframes warpJump {
+  0%   { transform: scale(0.2) rotate(0deg); opacity: 0; }
+  15%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { transform: scale(2.6) rotate(18deg); opacity: 0; }
+}
+
+/* Картка HUD з папкою: з'являється, коли смуги вже розлетілись */
+html[data-theme="cosmos"] .success-card {
+  --c: 34, 211, 238;
+  width: 190px;
+  height: 190px;
+  animation: hudLock 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s both;
+}
+html[data-theme="cosmos"] .success-card::before,
+html[data-theme="cosmos"] .success-card::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgb(var(--c));
+  pointer-events: none;
+}
+html[data-theme="cosmos"] .success-card::before { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+html[data-theme="cosmos"] .success-card::after  { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+html[data-theme="cosmos"] .success-icon {
+  animation: hudIcon 0.5s ease-out 0.6s both;
+  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.7));
+}
+@keyframes hudLock {
+  0%   { transform: scale(1.6); opacity: 0; box-shadow: 0 0 0 rgba(34, 211, 238, 0); }
+  60%  { transform: scale(0.96); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 40px rgba(34, 211, 238, 0.35), 0 10px 28px rgba(0, 0, 0, 0.5); }
+}
+@keyframes hudIcon {
+  0%   { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- РЕТРО: чорний екран сходинками, смуга завантаження, піксельна папка --- */
+html[data-theme="retro"] .success-overlay {
+  --success-duration: 1450ms;
+  background: var(--ink);
+  flex-direction: column;
+  gap: 26px;
+  clip-path: inset(0 0 100% 0);
+  animation: retroCurtain 0.3s steps(6, end) both;
+}
+@keyframes retroCurtain {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+html[data-theme="retro"] .wipe { display: none; }
+
+html[data-theme="retro"] .pixel-loader {
+  display: block;
+  position: relative;
+  text-align: center;
+  animation: retroShow 0.01s linear 0.3s both;
+}
+@keyframes retroShow { from { opacity: 0; } to { opacity: 1; } }
+
+html[data-theme="retro"] .pixel-bar {
+  width: 280px;
+  height: 26px;
+  margin: 0 auto 14px;
+  border: 3px solid var(--text);
+  box-shadow: 4px 4px 0 #000;
+  padding: 3px;
+  background: #000;
+}
+html[data-theme="retro"] .pixel-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: repeating-linear-gradient(90deg, var(--mint) 0 22px, var(--lime) 22px 26px);
+  animation: retroFill 0.75s steps(10, end) 0.35s both;
+}
+@keyframes retroFill { from { width: 0; } to { width: 100%; } }
+
+html[data-theme="retro"] .pixel-caption {
+  font-family: var(--font-head);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--sunflower);
+  text-shadow: 3px 3px 0 #000;
+}
+html[data-theme="retro"] .pixel-dots::after {
+  content: '';
+  display: inline-block;
+  width: 3ch;
+  text-align: left;
+  animation: retroDots 0.9s steps(4, end) infinite;
+}
+@keyframes retroDots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
+/* Піксельна папка "вискакує" кадрами після заповнення смуги */
+html[data-theme="retro"] .success-card {
+  width: 160px;
+  height: 160px;
+  border: 3px solid var(--text);
+  background: var(--paper);
+  box-shadow: 6px 6px 0 #000;
+  animation: retroPop 0.3s steps(4, end) 1.1s both;
+}
+html[data-theme="retro"] .success-icon { animation: none; }
+@keyframes retroPop {
+  0%   { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
