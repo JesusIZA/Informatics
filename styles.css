@@ -1923,3 +1923,12 @@ html[data-theme="retro"] .success-icon { animation: none; }
   html[data-theme="cosmos"] .back-btn { font-size: 0.95rem; letter-spacing: 0.03em; }
   html[data-theme="cosmos"] .category-title { font-size: 0.8rem; letter-spacing: 0.06em; }
 }
+
+/* ===== ПЕРЕМИКАЧ ТЕМ НА ВУЗЬКИХ ЕКРАНАХ: контент починається під ним ===== */
+@media (max-width: 900px) {
+  body { padding-top: 80px; }          /* кнопки 46px + відступ 14px + повітря */
+}
+@media (max-width: 500px) {
+  body { padding-top: 64px; }          /* кнопки 38px + відступ 8px + повітря */
+  h1.logo { padding-top: 0; }
+}
