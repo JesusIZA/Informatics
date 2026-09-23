@@ -78,7 +78,7 @@ Contains all CSS styles organized in sections:
 - Container (`.container`, `.container.wide`)
 - Animations (keyframes)
 - Page-specific components (class buttons, rules sections, game cards)
-- Media queries (responsive design, reduced motion)
+- Media queries (responsive design, reduced motion). Theme-prefixed selectors (`html[data-theme=…] …`) outrank the base `@media (max-width: 500px)` rules, so every theme that changes sizes must ship its own mobile block (cosmos and retro do). The logo uses `clamp(min, vw, max)` per theme so it never overflows the viewport (2026-09-23 fix: cosmos logo/buttons overflowed on phones).
 
 ### index.html
 - Main navigation page with class buttons

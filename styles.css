@@ -377,7 +377,7 @@ h1 {
 
 /* ===== ЛОГОТИП "ІНФОРМАТИКА" — кожна літера окремо ===== */
 h1.logo {
-  font-size: 5rem;
+  font-size: clamp(2.4rem, 12vw, 5rem); /* завжди вміщається в один рядок */
   line-height: 1;
   margin-bottom: 26px;
   padding-top: 12px;
@@ -1020,7 +1020,7 @@ html[data-theme="cosmos"] h1 {
 
 /* Логотип: Russo One ширший за Balsamiq — трохи менший кегль і рівніші літери */
 html[data-theme="cosmos"] h1.logo {
-  font-size: 4.3rem;
+  font-size: clamp(1.9rem, 10.5vw, 4.3rem); /* Russo One ширший — менший верхній кегль */
   letter-spacing: 0.02em;
 }
 html[data-theme="cosmos"] .logo-letter {
@@ -1491,7 +1491,7 @@ html[data-theme="retro"] h1::after {
 
 /* Логотип: рівні піксельні літери у 4 кольорах приставки */
 html[data-theme="retro"] h1.logo {
-  font-size: 2.6rem;
+  font-size: clamp(1.4rem, 7vw, 2.6rem); /* Press Start 2P: ~1em на літеру */
   line-height: 1.2;
   letter-spacing: 0.04em;
   padding-top: 18px;
@@ -1904,4 +1904,22 @@ html[data-theme="retro"] .success-icon { animation: none; }
 @keyframes retroPop {
   0%   { transform: scale(0); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== КОСМОС: мобільні правила (тематичні селектори перекривають базові @media) ===== */
+@media (max-width: 500px) {
+  html[data-theme="cosmos"] h1 { font-size: 1.5rem; letter-spacing: 0.02em; }
+  html[data-theme="cosmos"] h1.rules-title { font-size: 1.35rem; }
+  html[data-theme="cosmos"] .class-btn {
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    padding: 18px 6px 18px 12px;
+  }
+  html[data-theme="cosmos"] .class-btn::before,
+  html[data-theme="cosmos"] .class-btn::after { width: 8px; height: 8px; right: 4px; }
+  html[data-theme="cosmos"] .class-btn::before { top: 4px; }
+  html[data-theme="cosmos"] .class-btn::after { bottom: 4px; }
+  html[data-theme="cosmos"] .rules-btn,
+  html[data-theme="cosmos"] .back-btn { font-size: 0.95rem; letter-spacing: 0.03em; }
+  html[data-theme="cosmos"] .category-title { font-size: 0.8rem; letter-spacing: 0.06em; }
 }
