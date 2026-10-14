@@ -31,8 +31,8 @@ const DIFFICULTY = {
 const DEVICE_CATEGORIES = {
   input:   { id: 'input',   name: 'Введення',     icon: '⌨️' },
   output:  { id: 'output',  name: 'Виведення',    icon: '🖥️' },
-  storage: { id: 'storage', name: 'Зберігання',   icon: '💾' },
-  inside:  { id: 'inside',  name: 'Усередині ПК', icon: '🧠' }
+  storage:  { id: 'storage',  name: 'Зберігання', icon: '💾' },
+  programs: { id: 'programs', name: 'Програми',   icon: '🧩' }
 };
 
 const DEVICES = [
@@ -57,16 +57,17 @@ const DEVICES = [
   { emoji: '💿', name: 'CD-диск',       category: 'storage' },
   { emoji: '📀', name: 'DVD-диск',      category: 'storage' },
   { emoji: '📼', name: 'Касета',        category: 'storage' },
-  { emoji: '🗄️', name: 'Жорсткий диск', category: 'storage' },
-  { emoji: '🗂️', name: 'Картка пам\'яті', category: 'storage' },
-  { emoji: '☁️', name: 'Хмара',         category: 'storage' },
-  // Усередині системного блоку (лише на важкому рівні)
-  { emoji: '🧠', name: 'Процесор',          category: 'inside' },
-  { emoji: '🧩', name: 'Оперативна пам\'ять', category: 'inside' },
-  { emoji: '🪭', name: 'Кулер',             category: 'inside' },
-  { emoji: '🔋', name: 'Блок живлення',     category: 'inside' },
-  { emoji: '🟩', name: 'Материнська плата', category: 'inside' },
-  { emoji: '🎞️', name: 'Відеокарта',        category: 'inside' }
+  { emoji: '💽', name: 'Жорсткий диск',   category: 'storage' },
+  { emoji: '☁️', name: 'Хмарне сховище',  category: 'storage' },
+  // Програми (лише на важкому рівні): апаратне vs програмне забезпечення
+  { emoji: '🌐', name: 'Браузер',             category: 'programs' },
+  { emoji: '📝', name: 'Текстовий редактор',  category: 'programs' },
+  { emoji: '🎨', name: 'Графічний редактор',  category: 'programs' },
+  { emoji: '🧮', name: 'Калькулятор',         category: 'programs' },
+  { emoji: '📊', name: 'Електронні таблиці',  category: 'programs' },
+  { emoji: '📧', name: 'Електронна пошта',    category: 'programs' },
+  { emoji: '🎵', name: 'Музичний плеєр',      category: 'programs' },
+  { emoji: '🛡️', name: 'Антивірус',           category: 'programs' }
 ];
 
 function deviceTheme(categoryIds) {
@@ -79,7 +80,7 @@ function deviceTheme(categoryIds) {
 const THEMES = {
   devicesEasy: deviceTheme(['input', 'output']),
   devicesMedium: deviceTheme(['input', 'output', 'storage']),
-  devicesHard: deviceTheme(['input', 'output', 'storage', 'inside']),
+  devicesHard: deviceTheme(['input', 'output', 'storage', 'programs']),
 
   // Запасні теми (зараз не підключені до рівнів)
   fruitsVegetables: {

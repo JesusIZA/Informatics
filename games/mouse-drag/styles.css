@@ -777,8 +777,8 @@ body {
 .drop-zone[data-category="output"].drag-over  { background: rgba(67, 233, 123, 0.2); border-color: #43e97b; }
 .drop-zone[data-category="storage"] { border-color: rgba(254, 225, 64, 0.5); }
 .drop-zone[data-category="storage"].drag-over { background: rgba(254, 225, 64, 0.2); border-color: #fee140; }
-.drop-zone[data-category="inside"]  { border-color: rgba(240, 147, 251, 0.5); }
-.drop-zone[data-category="inside"].drag-over  { background: rgba(240, 147, 251, 0.2); border-color: #f093fb; }
+.drop-zone[data-category="programs"] { border-color: rgba(240, 147, 251, 0.5); }
+.drop-zone[data-category="programs"].drag-over { background: rgba(240, 147, 251, 0.2); border-color: #f093fb; }
 
 @media (max-width: 500px) {
   .drag-item.has-name {
@@ -803,3 +803,18 @@ body {
 @media (max-width: 500px) {
   #items-container { max-height: 190px; }
 }
+
+/* Підписи предметів більші й читабельніші */
+.drag-item.has-name { width: 108px; height: 108px; }
+.drag-item.has-name .item-emoji { font-size: 1.9rem; }
+.drag-item.has-name .item-name { font-size: 0.8rem; line-height: 1.15; }
+@media (max-width: 500px) {
+  .drag-item.has-name { width: 76px; height: 76px; }
+  .drag-item.has-name .item-emoji { font-size: 1.35rem; }
+  .drag-item.has-name .item-name { font-size: 0.62rem; }
+}
+@media (max-width: 400px) {
+  .drag-item.has-name { width: 68px; height: 68px; }
+  .drag-item.has-name .item-name { font-size: 0.58rem; }
+}
+#items-container { max-height: 300px; }
