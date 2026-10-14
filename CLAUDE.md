@@ -60,7 +60,7 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 │   │   ├── index.html
 │   │   ├── styles.css
 │   │   └── script.js
-│   └── mouse-drag/                 # "Перетягни предмет" game
+│   └── mouse-drag/                 # "Перетягни предмет" game (card icon 🗂️; 🧩 is reserved for the "Збери алгоритм" placeholder)
 │       ├── index.html
 │       ├── styles.css
 │       └── script.js
