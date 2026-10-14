@@ -1,13 +1,16 @@
 /**
- * Cyber Upgrade — таблиця рекордів (Google Apps Script), версія 1.1
+ * Cyber Upgrade — таблиця рекордів (Google Apps Script), версія 1.2
  *
- * Сумісна з поточним аркушем: колонки Час | Нік | Бали, кожна партія — окремий рядок,
- * у рейтингу — найкращий результат кожного імені (без урахування регістру).
+ * Аркуш: колонки Час | Нік | Бали, ОДИН рядок на ім'я (без урахування регістру).
+ * При старті партії гра записує ім'я з 0 (резервує його); наприкінці партії
+ * результат записується в той самий рядок, якщо він вищий за наявний.
+ * Старі дублікати (якщо лишились від попередніх версій) у рейтингу не заважають:
+ * береться найкращий результат імені.
  *
  * Скрипт прив'язаний до Google Таблиці й опублікований як веб-додаток.
  * Гра звертається до нього через JSONP (GET-запити з параметром callback):
  *   ?action=top&limit=5000&callback=fn   → { records: [{name, score}, ...] }  (усі імена, до limit)
- *   ?action=submit&name=Ім'я&score=120&callback=fn → { ok: true, best: 120 }
+ *   ?action=submit&name=Ім'я&score=120&callback=fn → { ok: true, best: 120, updated: true|false }
  *
  * Гра завантажує список один раз при відкритті і з нього бере топ-3, Топ-100
  * і перевірку, чи ім'я вже зайняте, — тому limit має бути великим.
@@ -118,18 +121,28 @@ function submit(p) {
   lock.waitLock(5000);
   try {
     var sheet = getSheet();
-    sheet.appendRow([new Date(), name, score]);
-    SpreadsheetApp.flush(); // щоб наступний запит одразу побачив новий рядок
+    var rec = bestScores(sheet)[name.toLowerCase()];
+    if (!rec) {
+      // Нове ім'я — новий рядок (при старті партії це резервування з 0)
+      sheet.appendRow([new Date(), name, score]);
+      SpreadsheetApp.flush();
+      return { ok: true, best: score, updated: true, created: true };
+    }
+    if (score > rec.score) {
+      // Вищий результат — оновлюємо той самий рядок
+      sheet.getRange(rec.row, 1, 1, 3).setValues([[new Date(), rec.name, score]]);
+      SpreadsheetApp.flush();
+      return { ok: true, best: score, updated: true, created: false };
+    }
+    return { ok: true, best: rec.score, updated: false, created: false };
   } finally {
     lock.releaseLock();
   }
-  var best = bestScores()[name.toLowerCase()];
-  return { ok: true, best: best ? best.score : score };
 }
 
-// Найкращий результат кожного гравця (ім'я без урахування регістру)
-function bestScores() {
-  var sheet = getSheet();
+// Найкращий результат кожного гравця (ім'я без урахування регістру) + номер його рядка
+function bestScores(sheet) {
+  sheet = sheet || getSheet();
   var rows = sheet.getDataRange().getValues();
   var best = {};
   for (var i = 1; i < rows.length; i++) { // рядок 1 — заголовки
@@ -137,7 +150,7 @@ function bestScores() {
     var score = Number(rows[i][2]);
     if (!name || isNaN(score)) continue;
     var key = name.toLowerCase();
-    if (!best[key] || score > best[key].score) best[key] = { name: name, score: score };
+    if (!best[key] || score > best[key].score) best[key] = { name: name, score: score, row: i + 1 };
   }
   return best;
 }
@@ -145,7 +158,7 @@ function bestScores() {
 function top(p) {
   var limit = Math.min(Math.max(parseInt(p.limit, 10) || 100, 1), MAX_LIMIT);
   var best = bestScores();
-  var list = Object.keys(best).map(function (k) { return best[k]; });
+  var list = Object.keys(best).map(function (k) { return { name: best[k].name, score: best[k].score }; });
   list.sort(function (a, b) { return b.score - a.score || a.name.localeCompare(b.name); });
   return { records: list.slice(0, limit) };
 }

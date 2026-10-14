@@ -289,9 +289,21 @@ let sessionName = '';
 try { sessionName = sessionStorage.getItem(SESSION_NAME_KEY) || ''; } catch (e) { /* ignore */ }
 let checking = false;
 
+// Після вибору ім'я фіксується до закриття вкладки: поле стає нередагованим
+function lockName(name) {
+  nameInput.value = name;
+  nameInput.readOnly = true;
+  nameInput.classList.add('locked');
+  nameInput.closest('.name-section').classList.add('locked');
+  $('name-label').textContent = 'Ти граєш як';
+  $('name-hint').textContent = 'Ім\'я закріплено до закриття вкладки';
+  nameError.textContent = '';
+}
+
 // Крок 1: перевірка імені. Зайняте ім'я відхиляємо.
 async function requestStart() {
   if (checking) return;
+  if (sessionName) return startGame(sessionName); // ім'я вже закріплене
   const name = cleanName(nameInput.value);
   if (name.length < 2) {
     nameError.textContent = 'Напиши своє ім\'я (хоча б 2 літери)';
@@ -305,7 +317,6 @@ async function requestStart() {
     nameInput.select();
     return;
   }
-  if (sessionName && sessionName.toLowerCase() === name.toLowerCase()) return startGame(sessionName);
 
   checking = true;
   startBtn.disabled = true;
@@ -341,6 +352,7 @@ function startGame(name) {
   state.name = name;
   sessionName = name;
   try { sessionStorage.setItem(SESSION_NAME_KEY, name); } catch (e) { /* ignore */ }
+  lockName(name);
   reserveName(name);
 
   state.queue = shuffle(window.CYBER_QUESTIONS.slice());
@@ -490,7 +502,7 @@ $('board-close').addEventListener('click', closeBoard);
 boardOverlay.addEventListener('click', (e) => { if (e.target === boardOverlay) closeBoard(); });
 
 $('quit-btn').addEventListener('click', quitToMenu);
-$('play-again-btn').addEventListener('click', () => { nameInput.value = state.name; startGame(state.name); });
+$('play-again-btn').addEventListener('click', () => startGame(state.name));
 $('result-board-btn').addEventListener('click', openBoard);
 $('back-menu-btn').addEventListener('click', quitToMenu);
 
@@ -501,5 +513,5 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ===== СТАРТ =====
-nameInput.value = sessionName; // порожньо, якщо вкладку відкрили заново
+if (sessionName) lockName(sessionName); // у цій вкладці ім'я вже обрано — поле заблоковане
 refreshTop3();

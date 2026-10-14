@@ -90,6 +90,25 @@ body {
 }
 
 #player-name:focus { border-color: #4facfe; }
+
+/* Закріплене ім'я: нередаговане поле із замочком */
+#player-name.locked {
+  background: rgba(67, 233, 123, 0.1);
+  border-color: rgba(67, 233, 123, 0.5);
+  color: #43e97b;
+  cursor: default;
+  padding-right: 42px;
+}
+#player-name.locked:focus { border-color: rgba(67, 233, 123, 0.5); }
+.name-section { position: relative; }
+.name-section.locked::after {
+  content: '🔒';
+  position: absolute;
+  right: 32px;
+  top: 52px;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
 #player-name::placeholder { color: rgba(255, 255, 255, 0.35); font-weight: 400; }
 
 .name-error {
