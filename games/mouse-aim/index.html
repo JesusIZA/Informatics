@@ -97,6 +97,10 @@
               <span>Яблучко</span>
             </div>
           </div>
+          <ul class="rules-notes">
+            <li>🎯 Яблучка поспіль: <b>3 — бонус +10</b>, далі <b>кожні 5 — +25</b>. Інше влучання, промах або згоріла мішень обривають серію</li>
+            <li>🏃 На важкому рівні мішені <b>рухаються</b> й відбиваються від країв поля</li>
+          </ul>
         </div>
 
         <a href="../../games.html" class="menu-back-btn">← Назад до ігор</a>
@@ -125,6 +129,10 @@
         <div class="hud-item hud-combo">
           <span class="label">Серія</span>
           <span class="value" id="combo">x1</span>
+        </div>
+        <div class="hud-item hud-bullseye" id="hud-bullseye">
+          <span class="label">Яблучко</span>
+          <span class="value">🎯<span id="bullseye-streak">0</span></span>
         </div>
         <button class="pause-btn" id="pause-btn">⏸️ Пауза</button>
       </div>
@@ -167,6 +175,10 @@
           <div class="stat-item">
             <div class="stat-value" id="stat-bullseyes">0</div>
             <div class="stat-label">яблучок</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-bullseye-streak">0</div>
+            <div class="stat-label">яблучок поспіль</div>
           </div>
         </div>
 

@@ -187,7 +187,9 @@ Contains all CSS styles organized in sections:
 - 3 difficulty levels:
   - Easy (4s per target, 2 max targets, size 80-100px)
   - Medium (3s per target, 3 max targets, size 60-80px)
-  - Hard (2s per target, 4 max targets, size 45-60px)
+  - Hard (2s per target, 4 max targets, size 45-60px) — **targets move** (2026-10-14): `DIFFICULTY.hard.moveSpeed` {min 50, max 110} px/s, random direction, bounce off the game-area edges (`.target.moving`); easy/medium have `moveSpeed: null`
+- Hits and misses use `pointerdown` (not `click`) so a moving target can't slip away between press and release. Click coordinates are divided by the element's current scale (`rect.width / size`) because during the 0.3 s `targetAppear` animation the target is shrunk and a centre click used to count as an outer-ring hit
+- **Bullseye streak** (2026-10-14): consecutive bullseye hits; 3 in a row → +10, then every 5th (5, 10, 15…) → +25 (`bullseyeBonusFor`). Any non-bullseye hit, miss or expired target resets it. HUD "Яблучко 🎯 N" (`.hot` glow from 3), centre `.bullseye-banner`, result stat "яблучок поспіль". Menu lists both rules under the zones (`.rules-notes`)
 - Target zones: outer (1pt), middle (2pt), bullseye (5pt)
 - Target types: normal, golden (×2 points), fast (×0.6 time), time bonus (+5 sec)
 - Combo system: 5+ streak = ×2, 10+ = ×3, 15+ = ×4

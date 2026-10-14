@@ -744,3 +744,87 @@ body {
     animation: targetAppear 0.01ms !important;
   }
 }
+
+/* ===== РУХОМІ МІШЕНІ ТА СЕРІЯ ЯБЛУЧОК (покращення 2026-10) ===== */
+
+/* Правила в меню */
+.rules-notes {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  display: grid;
+  gap: 6px;
+}
+.rules-notes li {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+}
+.rules-notes b { color: #fee140; font-weight: 700; }
+
+/* Рухома мішень: позиція керується скриптом, без переходів */
+.target.moving {
+  transition: none;
+  touch-action: none;
+}
+
+/* HUD: серія яблучок */
+.hud-bullseye .value {
+  color: #ff9f1c;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.hud-bullseye.hot .value {
+  color: #ffd700;
+  animation: comboGlow 0.5s ease-in-out infinite alternate;
+}
+
+/* Банер бонусу за серію яблучок посеред поля */
+.bullseye-banner {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  z-index: 20;
+  animation: bullseyeBanner 1.1s ease-out forwards;
+}
+.bullseye-banner .big {
+  font-family: var(--font-head);
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 18px rgba(255, 159, 28, 0.9), 0 4px 10px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+.bullseye-banner .bonus {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffd700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+@keyframes bullseyeBanner {
+  0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  20%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  70%  { transform: translate(-50%, -58%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -85%) scale(0.9); opacity: 0; }
+}
+
+@media (max-width: 500px) {
+  .rules-notes li { font-size: 0.8rem; }
+  .bullseye-banner .big { font-size: 1.6rem; }
+  .bullseye-banner .bonus { font-size: 1.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-bullseye.hot .value { animation: none; }
+  .bullseye-banner { animation-duration: 0.01ms !important; }
+}

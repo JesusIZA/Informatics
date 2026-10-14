@@ -8,7 +8,8 @@ const DIFFICULTY = {
     targetSize: { min: 80, max: 100 },
     goldenChance: 0.10,
     fastChance: 0.10,
-    timeBonusChance: 0.05
+    timeBonusChance: 0.05,
+    moveSpeed: null                      // мішені стоять на місці
   },
   medium: {
     name: 'Середній',
@@ -18,7 +19,8 @@ const DIFFICULTY = {
     targetSize: { min: 60, max: 80 },
     goldenChance: 0.10,
     fastChance: 0.10,
-    timeBonusChance: 0.05
+    timeBonusChance: 0.05,
+    moveSpeed: null
   },
   hard: {
     name: 'Важкий',
@@ -28,9 +30,41 @@ const DIFFICULTY = {
     targetSize: { min: 45, max: 60 },
     goldenChance: 0.10,
     fastChance: 0.10,
-    timeBonusChance: 0.05
+    timeBonusChance: 0.05,
+    moveSpeed: { min: 50, max: 110 }     // px/с: мішені пливуть і відбиваються від країв
   }
 };
+
+// Серія влучень у яблучко поспіль: 3 → +10, далі кожні 5 (5, 10, 15…) → +25
+function bullseyeBonusFor(streak) {
+  if (streak === 3) return 10;
+  if (streak >= 5 && streak % 5 === 0) return 25;
+  return 0;
+}
+
+function freshState(difficulty) {
+  return {
+    isRunning: true,
+    isPaused: false,
+    difficulty: difficulty,
+    score: 0,
+    lives: INITIAL_LIVES,
+    timeLeft: GAME_DURATION,
+    targets: [],
+    hitCount: 0,
+    missCount: 0,
+    bullseyeCount: 0,
+    bullseyeStreak: 0,
+    bestBullseyeStreak: 0,
+    streak: 0,
+    bestStreak: 0,
+    multiplier: 1,
+    spawnTimer: null,
+    gameTimer: null,
+    lastTimestamp: 0,
+    animationFrameId: null
+  };
+}
 
 // Points for each zone: [outer, middle, inner/bullseye]
 const POINTS = {
@@ -52,25 +86,8 @@ const COMBO_THRESHOLDS = [
 ];
 
 // ===== GAME STATE =====
-let gameState = {
-  isRunning: false,
-  isPaused: false,
-  difficulty: 'easy',
-  score: 0,
-  lives: INITIAL_LIVES,
-  timeLeft: GAME_DURATION,
-  targets: [],
-  hitCount: 0,
-  missCount: 0,
-  bullseyeCount: 0,
-  streak: 0,
-  bestStreak: 0,
-  multiplier: 1,
-  spawnTimer: null,
-  gameTimer: null,
-  lastTimestamp: 0,
-  animationFrameId: null
-};
+let gameState = freshState('easy');
+gameState.isRunning = false;
 
 // ===== DOM ELEMENTS =====
 const screens = {
@@ -85,6 +102,9 @@ const elements = {
   time: document.getElementById('time'),
   lives: document.getElementById('lives'),
   combo: document.getElementById('combo'),
+  hudBullseye: document.getElementById('hud-bullseye'),
+  bullseyeStreak: document.getElementById('bullseye-streak'),
+  statBullseyeStreak: document.getElementById('stat-bullseye-streak'),
   pauseBtn: document.getElementById('pause-btn'),
   pauseOverlay: document.getElementById('pause-overlay'),
   resumeBtn: document.getElementById('resume-btn'),
@@ -111,6 +131,11 @@ class Target {
     this.type = config.type;
     this.maxTime = config.maxTime;
     this.timeLeft = config.maxTime;
+    // Рух (лише на важкому рівні): швидкість у випадковому напрямку
+    const speed = config.speed || 0;
+    const angle = Math.random() * Math.PI * 2;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
     this.element = null;
     this.timerProgress = null;
     this.isCompleted = false;
@@ -122,6 +147,7 @@ class Target {
   createElement() {
     this.element = document.createElement('div');
     this.element.className = `target ${this.type}`;
+    if (this.vx || this.vy) this.element.classList.add('moving');
     this.element.style.left = `${this.x}px`;
     this.element.style.top = `${this.y}px`;
     this.element.style.width = `${this.size}px`;
@@ -156,13 +182,19 @@ class Target {
     this.element.appendChild(timerDiv);
     this.timerProgress = timerDiv.querySelector('.timer-progress');
 
-    // Click handler
-    this.element.addEventListener('click', (e) => {
+    // pointerdown замість click: рухома мішень устигає втекти між натисканням
+    // і відпусканням кнопки, тож click не спрацьовував би
+    this.element.addEventListener('pointerdown', (e) => {
+      if (e.button !== undefined && e.button !== 0) return; // лише ліва кнопка / дотик
       e.stopPropagation();
+      e.preventDefault();
       // Use getBoundingClientRect to get correct position relative to target center
       const rect = this.element.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
+      // Під час анімації появи мішень зменшена (transform: scale), тож переводимо
+      // координати у "нормальний" розмір, інакше клік у центр рахувався б як край
+      const scale = rect.width / this.size || 1;
+      const clickX = (e.clientX - rect.left) / scale;
+      const clickY = (e.clientY - rect.top) / scale;
       this.hit(clickX, clickY);
     });
 
@@ -173,6 +205,25 @@ class Target {
     if (this.isCompleted) return;
 
     this.timeLeft -= dt * 1000;
+
+    // Рух із відбиванням від країв поля
+    if (this.vx || this.vy) {
+      const areaRect = elements.gameArea.getBoundingClientRect();
+      const maxX = areaRect.width - this.size;
+      const maxY = areaRect.height - this.size;
+      this.x += this.vx * dt;
+      this.y += this.vy * dt;
+      if (this.x <= 0 || this.x >= maxX) {
+        this.vx = -this.vx;
+        this.x = Math.max(0, Math.min(maxX, this.x));
+      }
+      if (this.y <= 0 || this.y >= maxY) {
+        this.vy = -this.vy;
+        this.y = Math.max(0, Math.min(maxY, this.y));
+      }
+      this.element.style.left = `${this.x}px`;
+      this.element.style.top = `${this.y}px`;
+    }
 
     // Update timer ring
     const progress = this.timeLeft / this.maxTime;
@@ -245,6 +296,21 @@ class Target {
     gameState.score += points;
     gameState.hitCount++;
     updateCombo(true);
+
+    // Серія яблучок: будь-яке інше влучання її обриває
+    if (zone === 'bullseye') {
+      gameState.bullseyeStreak++;
+      gameState.bestBullseyeStreak = Math.max(gameState.bestBullseyeStreak, gameState.bullseyeStreak);
+      const bonus = bullseyeBonusFor(gameState.bullseyeStreak);
+      if (bonus > 0) {
+        gameState.score += bonus;
+        showBullseyeBanner(gameState.bullseyeStreak, bonus);
+        GameKit.play('good');
+      }
+    } else {
+      gameState.bullseyeStreak = 0;
+    }
+    updateBullseyeDisplay();
     updateHUD();
 
     showScorePopup(this.x + this.size / 2, this.y, popupText, popupClass);
@@ -259,6 +325,7 @@ class Target {
 
     loseLife();
     updateCombo(false);
+    resetBullseyeStreak();
     showScorePopup(this.x + this.size / 2, this.y, '💔', 'negative');
 
     this.element.classList.add('expired');
@@ -306,30 +373,13 @@ function saveRecord(difficulty, score, bestCombo) {
 }
 
 function startGame(difficulty) {
-  gameState = {
-    isRunning: true,
-    isPaused: false,
-    difficulty: difficulty,
-    score: 0,
-    lives: INITIAL_LIVES,
-    timeLeft: GAME_DURATION,
-    targets: [],
-    hitCount: 0,
-    missCount: 0,
-    bullseyeCount: 0,
-    streak: 0,
-    bestStreak: 0,
-    multiplier: 1,
-    spawnTimer: null,
-    gameTimer: null,
-    lastTimestamp: 0,
-    animationFrameId: null
-  };
+  gameState = freshState(difficulty);
 
   elements.gameArea.innerHTML = '';
   updateHUD();
   updateLivesDisplay();
   updateComboDisplay();
+  updateBullseyeDisplay();
   showScreen('game');
 
   // Wait for the screen to render
@@ -391,6 +441,9 @@ function spawnTarget() {
   // Determine type
   let type = 'normal';
   let targetTime = config.targetTime;
+  const speed = config.moveSpeed
+    ? config.moveSpeed.min + Math.random() * (config.moveSpeed.max - config.moveSpeed.min)
+    : 0;
   const rand = Math.random();
 
   if (rand < config.goldenChance) {
@@ -419,7 +472,8 @@ function spawnTarget() {
     y: y,
     size: size,
     type: type,
-    maxTime: targetTime
+    maxTime: targetTime,
+    speed: speed
   });
 
   gameState.targets.push(target);
@@ -440,8 +494,10 @@ function handleMiss(e) {
 
   // Only count as miss if clicking on game area, not on targets
   if (e.target === elements.gameArea) {
+    if (e.button !== undefined && e.button !== 0) return;
     gameState.missCount++;
     updateCombo(false);
+    resetBullseyeStreak();
 
     // Show miss indicator
     const rect = elements.gameArea.getBoundingClientRect();
@@ -538,6 +594,25 @@ function updateCombo(success) {
   updateComboDisplay();
 }
 
+function resetBullseyeStreak() {
+  if (gameState.bullseyeStreak === 0) return;
+  gameState.bullseyeStreak = 0;
+  updateBullseyeDisplay();
+}
+
+function updateBullseyeDisplay() {
+  elements.bullseyeStreak.textContent = gameState.bullseyeStreak;
+  elements.hudBullseye.classList.toggle('hot', gameState.bullseyeStreak >= 3);
+}
+
+function showBullseyeBanner(streak, bonus) {
+  const banner = document.createElement('div');
+  banner.className = 'bullseye-banner';
+  banner.innerHTML = `<span class="big">🎯 ${streak} поспіль!</span><span class="bonus">+${bonus}</span>`;
+  elements.gameArea.appendChild(banner);
+  setTimeout(() => banner.remove(), 1100);
+}
+
 function updateComboDisplay() {
   elements.combo.textContent = `x${gameState.multiplier}`;
   if (gameState.multiplier >= 3) {
@@ -592,6 +667,7 @@ function endGame() {
   elements.statAccuracy.textContent = `${accuracy}%`;
   elements.statBestCombo.textContent = gameState.bestStreak;
   elements.statBullseyes.textContent = gameState.bullseyeCount;
+  elements.statBullseyeStreak.textContent = gameState.bestBullseyeStreak;
 
   if (isNewRecord) {
     elements.newRecord.style.display = 'inline-block';
@@ -637,8 +713,8 @@ elements.quitBtn.addEventListener('click', quitToMenu);
 elements.playAgainBtn.addEventListener('click', () => startGame(gameState.difficulty));
 elements.backMenuBtn.addEventListener('click', () => showScreen('menu'));
 
-// Click on game area (miss)
-elements.gameArea.addEventListener('click', handleMiss);
+// Натискання на порожнє поле (промах) — pointerdown, як і влучання
+elements.gameArea.addEventListener('pointerdown', handleMiss);
 
 // Keyboard handling
 document.addEventListener('keydown', (e) => {
