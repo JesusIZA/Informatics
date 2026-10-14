@@ -217,6 +217,7 @@ Contains all CSS styles organized in sections:
 - `.container.wide` - same 700px max-width as `.container` (kept for rules/games pages; base container was widened from 550px to 700px)
 - `h1.rules-title` - smaller title with more bottom margin
 - `.game-card.coming-soon` - disabled game card with "Скоро" badge
+- `.game-card.is-new` + `<span class="new-badge">NEW</span>` - "NEW" tag on a freshly added game (currently Cyber Upgrade); per theme: candy pink wiggle, cosmos glow pulse, retro magenta blink. Remove the class + span when the game stops being new
 
 ## Shared game kit (`games/common/game-kit.js` + `game-kit.css`)
 Loaded by the six trainer games (not by Cyber Upgrade yet). Provides:
@@ -262,3 +263,11 @@ Agreed shape:
 - **Remember the choice** in `localStorage` for the current day only (per computer), so it isn't asked again during the same lesson; no data leaves the browser.
 - Keep buttons/codes/rules readable in every theme; verify all three main pages (index, rules, games) per theme with screenshots.
 - Suggested first step: two themes to evaluate the feel, then extend to 4.
+
+### Touch typing game "Сліпий друк" (placeholder card added 2026-10-14)
+`games.html` has a disabled `.coming-soon` card in the "Клавіатура" category pointing to `games/touch-typing/index.html` (not created yet). Planned content, merged from two earlier improvement ideas:
+- Home-row ("ФІВА") mode for beginners with an on-screen keyboard scheme highlighting the key to press and the finger to use.
+- Whole texts instead of single words on harder levels, with words-per-minute shown at the end; dictionary can include informatics terms.
+
+### Logic game "Збери алгоритм" (placeholder card added 2026-10-14)
+`games.html` has a disabled `.coming-soon` card in the "Логіка" category pointing to `games/build-algorithm/index.html` (not created yet). Idea: blocks of commands ("вперед", "поворот", "повтори") are dragged into the right order so a robot reaches the goal on a small grid; levels grow from 3 commands to loops.

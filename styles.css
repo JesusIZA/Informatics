@@ -784,6 +784,7 @@ h1.rules-title {
 }
 
 .coming-soon-badge,
+.new-badge,
 .external-badge {
   position: absolute;
   right: 16px;
@@ -998,7 +999,7 @@ html[data-theme="cosmos"] {
 
 /* Russo One має лише одну вагу — прибираємо штучне потовщення */
 html[data-theme="cosmos"] :is(h1, .logo-letter, .class-btn, .rules-btn, .back-btn,
-  .category-title, .game-info h3, .rules-section h2, .coming-soon-badge, .external-badge,
+  .category-title, .game-info h3, .rules-section h2, .coming-soon-badge, .new-badge, .external-badge,
   .modal-content h2, #code-input, .modal-btn) {
   font-weight: 400;
 }
@@ -1299,6 +1300,7 @@ html[data-theme="cosmos"] .game-card.coming-soon {
 }
 html[data-theme="cosmos"] .game-card.coming-soon::after { display: none; }
 html[data-theme="cosmos"] .coming-soon-badge,
+html[data-theme="cosmos"] .new-badge,
 html[data-theme="cosmos"] .external-badge {
   border-width: 1px;
   border-radius: 3px;
@@ -1419,7 +1421,7 @@ html[data-theme="retro"] {
 
 /* Press Start 2P має одну вагу і виглядає великим — зменшуємо кеглі */
 html[data-theme="retro"] :is(h1, .logo-letter, .class-btn, .rules-btn, .back-btn,
-  .category-title, .game-info h3, .rules-section h2, .coming-soon-badge, .external-badge,
+  .category-title, .game-info h3, .rules-section h2, .coming-soon-badge, .new-badge, .external-badge,
   .modal-content h2, .modal-btn) {
   font-weight: 400;
   text-transform: none;
@@ -1527,6 +1529,7 @@ html[data-theme="retro"] .theme-btn,
 html[data-theme="retro"] .category-title,
 html[data-theme="retro"] .game-icon,
 html[data-theme="retro"] .coming-soon-badge,
+html[data-theme="retro"] .new-badge,
 html[data-theme="retro"] .external-badge,
 html[data-theme="retro"] #code-input,
 html[data-theme="retro"] .modal-btn {
@@ -1680,6 +1683,7 @@ html[data-theme="retro"] .game-card-external .game-icon {
 }
 html[data-theme="retro"] .game-card.coming-soon { border-style: dashed; box-shadow: none; }
 html[data-theme="retro"] .coming-soon-badge,
+html[data-theme="retro"] .new-badge,
 html[data-theme="retro"] .external-badge {
   font-size: 0.6rem;
   padding: 6px 10px;
@@ -1942,3 +1946,39 @@ html[data-theme="cosmos"] .category-title.category-quiz { --c: 103, 232, 249; }
 html[data-theme="cosmos"] .game-card-quiz { --c: 103, 232, 249; }
 
 html[data-theme="retro"] .category-title.category-quiz { background: #00e5ff; }
+
+/* ===== БІРКА "NEW" на новій грі ===== */
+.game-card.is-new { padding-right: 96px; }
+.new-badge {
+  background: var(--bubblegum);
+  color: #fff;
+  transform: translateY(-50%) rotate(-4deg);
+  animation: newBadgeWiggle 2.4s ease-in-out infinite;
+}
+@keyframes newBadgeWiggle {
+  0%, 100% { transform: translateY(-50%) rotate(-4deg) scale(1); }
+  50%      { transform: translateY(-50%) rotate(-4deg) scale(1.08); }
+}
+html[data-theme="cosmos"] .new-badge {
+  background: rgba(var(--c), 0.2);
+  border-color: rgb(var(--c));
+  color: rgb(var(--c));
+  box-shadow: 0 0 12px rgba(var(--c), 0.5);
+  animation: newBadgePulse 2.4s ease-in-out infinite;
+}
+@keyframes newBadgePulse {
+  0%, 100% { transform: translateY(-50%); box-shadow: 0 0 12px rgba(var(--c), 0.5); }
+  50%      { transform: translateY(-50%); box-shadow: 0 0 22px rgba(var(--c), 0.9); }
+}
+html[data-theme="retro"] .new-badge {
+  background: var(--coral);
+  color: #fff;
+  animation: newBadgeBlink 1.2s steps(2, end) infinite;
+}
+@keyframes newBadgeBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .new-badge { animation: none; }
+}
