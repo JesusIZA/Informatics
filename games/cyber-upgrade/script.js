@@ -185,8 +185,11 @@ async function loadBoard(force) {
         if (data && Array.isArray(data.records)) remote = data.records;
       } catch (e) { /* немає зв'язку — лишаємось на локальних */ }
     }
+    // Поки таблиця доступна — показуємо ЛИШЕ її (локальні записи цього комп'ютера
+    // не домішуються, інакше видалені з таблиці імена "воскресали" б).
+    // Локальні рекорди — тільки запасний варіант без зв'язку.
     board.source = remote ? 'sheet' : 'local';
-    board.records = mergeRecords(remote ? [remote, localRecords()] : [localRecords()]);
+    board.records = mergeRecords(remote ? [remote] : [localRecords()]);
     board.loading = null;
     return board.records;
   })();
