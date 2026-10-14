@@ -14,7 +14,6 @@ const SCORE_PER_CORRECT = 10;
 const STREAK_STEP = 3;          // кожні 3 правильні поспіль…
 const STREAK_BONUS = 5;         // …дають бонус
 const INITIAL_LIVES = 3;
-const STORAGE_KEY = 'cyberUpgradeRecords';
 const SESSION_NAME_KEY = 'cyberUpgradeSessionName'; // sessionStorage: живе лише поки відкрита вкладка
 const MAX_NAME = 20;
 const BOARD_LIMIT = 100;        // скільки записів показує вікно "Топ-100"
@@ -99,39 +98,9 @@ function nextUpgrade(score) {
   return UPGRADES.find(u => u.min > score) || null;
 }
 
-// ===== ЛОКАЛЬНІ РЕКОРДИ (цей браузер) =====
-function loadLocal() {
-  try {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    return Array.isArray(data.records) ? data : { records: [] };
-  } catch (e) {
-    return { records: [] };
-  }
-}
-
-function saveLocalRecord(name, score) {
-  const data = loadLocal();
-  const existing = data.records.find(r => r.name.toLowerCase() === name.toLowerCase());
-  let isNewBest = false;
-  if (!existing) {
-    data.records.push({ name, score, date: new Date().toISOString() });
-    isNewBest = true;
-  } else if (score > existing.score) {
-    existing.score = score;
-    existing.date = new Date().toISOString();
-    isNewBest = true;
-  }
-  data.records.sort((a, b) => b.score - a.score);
-  data.records = data.records.slice(0, 500);
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { /* ignore */ }
-  return { isNewBest, best: existing ? Math.max(existing.score, score) : score };
-}
-
-function localRecords() {
-  return loadLocal().records.map(r => ({ name: r.name, score: r.score }));
-}
-
 // ===== GOOGLE ТАБЛИЦЯ (JSONP) =====
+// Єдине джерело рекордів. Локального запасного варіанту немає: без зв'язку
+// списки порожні, а результат партії показується лише на екрані.
 function jsonp(params, timeoutMs) {
   return new Promise((resolve, reject) => {
     if (!LEADERBOARD_URL) return reject(new Error('no-url'));
@@ -169,9 +138,9 @@ function mergeRecords(lists) {
 }
 
 // ----- Кеш списку рекордів -----
-// board.records — повний відсортований список (таблиця + локальні),
-// board.source — 'sheet' | 'local' (звідки взято), board.loading — чи триває завантаження
-const board = { records: null, source: 'local', loading: null };
+// board.records — повний відсортований список із таблиці (порожній, якщо зв'язку немає),
+// board.source — 'sheet' | 'offline', board.loading — чи триває завантаження
+const board = { records: null, source: 'offline', loading: null };
 
 async function loadBoard(force) {
   if (board.records && !force) return board.records;
@@ -183,13 +152,10 @@ async function loadBoard(force) {
       try {
         const data = await jsonp({ action: 'top', limit: FETCH_LIMIT });
         if (data && Array.isArray(data.records)) remote = data.records;
-      } catch (e) { /* немає зв'язку — лишаємось на локальних */ }
+      } catch (e) { /* немає зв'язку — список порожній */ }
     }
-    // Поки таблиця доступна — показуємо ЛИШЕ її (локальні записи цього комп'ютера
-    // не домішуються, інакше видалені з таблиці імена "воскресали" б).
-    // Локальні рекорди — тільки запасний варіант без зв'язку.
-    board.source = remote ? 'sheet' : 'local';
-    board.records = mergeRecords(remote ? [remote] : [localRecords()]);
+    board.source = remote ? 'sheet' : 'offline';
+    board.records = remote ? mergeRecords([remote]) : [];
     board.loading = null;
     return board.records;
   })();
@@ -197,8 +163,11 @@ async function loadBoard(force) {
 }
 
 function boardNote() {
-  if (!LEADERBOARD_URL) return 'Рекорди цього комп\'ютера';
-  return board.source === 'sheet' ? 'Найкращі гравці школи' : 'Немає зв\'язку з таблицею, показую рекорди цього комп\'ютера';
+  return board.source === 'sheet' ? 'Найкращі гравці школи' : 'Немає зв\'язку з таблицею рекордів';
+}
+
+function emptyText() {
+  return board.source === 'sheet' ? 'Ще немає рекордів — стань першим!' : 'Немає зв\'язку з таблицею рекордів';
 }
 
 async function submitScore(name, score) {
@@ -207,11 +176,12 @@ async function submitScore(name, score) {
   return data;
 }
 
-// Чи зайняте ім'я — перед перевіркою завантажуємо найсвіжіший список із таблиці
+// Чи зайняте ім'я — перед перевіркою завантажуємо найсвіжіший список із таблиці.
+// Без зв'язку перевірити неможливо — дозволяємо грати (результат усе одно не запишеться).
 async function checkName(name) {
   const records = await loadBoard(true);
   const hit = records.find(r => r.name.toLowerCase() === name.toLowerCase());
-  return hit ? { exists: true, best: hit.score, name: hit.name } : { exists: false };
+  return hit ? { exists: true, best: hit.score, name: hit.name } : { exists: false, offline: board.source !== 'sheet' };
 }
 
 // ===== РЕНДЕР СПИСКІВ РЕКОРДІВ =====
@@ -256,11 +226,11 @@ async function refreshTop3() {
     renderLoading(top3List);
     top3Note.textContent = 'Завантажую…';
   } else {
-    renderList(top3List, board.records.slice(0, 3), 'Ще немає рекордів — стань першим!');
+    renderList(top3List, board.records.slice(0, 3), emptyText());
     top3Note.textContent = 'Оновлюю…';
   }
   const records = await loadBoard(true);
-  renderList(top3List, records.slice(0, 3), 'Ще немає рекордів — стань першим!');
+  renderList(top3List, records.slice(0, 3), emptyText());
   top3Note.textContent = boardNote();
 }
 
@@ -271,12 +241,12 @@ async function openBoard() {
     renderLoading(boardList);
     boardStatus.textContent = 'Завантажую таблицю…';
   } else {
-    renderList(boardList, board.records.slice(0, BOARD_LIMIT), 'Ще немає рекордів');
+    renderList(boardList, board.records.slice(0, BOARD_LIMIT), emptyText());
     boardStatus.textContent = 'Оновлюю…';
   }
   const records = await loadBoard(true);
   if (!boardOverlay.classList.contains('active')) return;
-  renderList(boardList, records.slice(0, BOARD_LIMIT), 'Ще немає рекордів');
+  renderList(boardList, records.slice(0, BOARD_LIMIT), emptyText());
   boardStatus.textContent = boardNote();
 }
 
@@ -344,9 +314,8 @@ let reservedName = '';
 function reserveName(name) {
   if (reservedName.toLowerCase() === name.toLowerCase()) return;
   reservedName = name;
-  saveLocalRecord(name, 0);
   if (LEADERBOARD_URL) {
-    submitScore(name, 0).catch(() => { /* без зв'язку ім'я лишається зарезервованим локально */ });
+    submitScore(name, 0).catch(() => { /* без зв'язку резервування не вдалось — граємо далі */ });
   }
 }
 
@@ -448,7 +417,6 @@ function answer(i) {
 async function endGame() {
   clearTimeout(state.timer);
   const score = state.score;
-  const local = saveLocalRecord(state.name, score);
   const level = upgradeFor(score);
   const next = nextUpgrade(score);
   const finished = state.lives > 0;
@@ -458,14 +426,14 @@ async function endGame() {
   $('final-score').textContent = score;
   $('stat-correct').textContent = state.correct;
   $('stat-answered').textContent = state.answered;
-  $('stat-best').textContent = local.best;
+  $('stat-best').textContent = score;
   $('upgrade-robot').textContent = level.robot;
   $('upgrade-title').textContent = level.title;
   $('upgrade-part').textContent = 'Апгрейд: ' + level.part;
   $('upgrade-next').textContent = next
     ? 'До наступного апгрейду «' + next.title + '» ще ' + (next.min - score) + ' очок'
     : 'Максимальний рівень! Ти кібер-легенда';
-  $('new-record').style.display = local.isNewBest && score > 0 ? 'block' : 'none';
+  $('new-record').style.display = 'none';
 
   const status = $('submit-status');
   status.textContent = '';
@@ -475,14 +443,15 @@ async function endGame() {
     status.textContent = 'Записую результат у таблицю…';
     try {
       const res = await submitScore(state.name, score);
+      $('stat-best').textContent = res.best;
       if (res.updated === false) {
         status.textContent = 'У таблиці лишається твій кращий результат: ' + res.best;
-        $('stat-best').textContent = res.best;
       } else {
         status.textContent = 'Результат записано в таблицю школи ✅';
+        $('new-record').style.display = 'block';
       }
     } catch (e) {
-      status.textContent = 'Не вдалося записати в таблицю, результат збережено на цьому комп\'ютері';
+      status.textContent = 'Немає зв\'язку з таблицею — результат не збережено';
     }
   }
   // Після запису — підтягнути свіжий список, щоб новий результат був у кеші
@@ -516,5 +485,6 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ===== СТАРТ =====
+try { localStorage.removeItem('cyberUpgradeRecords'); } catch (e) { /* залишок від старої версії */ }
 if (sessionName) lockName(sessionName); // у цій вкладці ім'я вже обрано — поле заблоковане
 refreshTop3();
