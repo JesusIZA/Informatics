@@ -171,10 +171,12 @@ Contains all CSS styles organized in sections:
 
 ### Mouse Drag Game (`games/mouse-drag/`)
 - Drag and drop sorting game
-- 3 difficulty levels with different themes:
-  - Easy: Fruits vs Vegetables (2 categories, 8 items, 80s) — pool: 16+16 items
-  - Medium: Animals by habitat - Farm/Forest/Water (3 categories, 12 items, 100s) — pool: 13+17+17 items
-  - Hard: Seasons - Winter/Spring/Summer/Autumn (4 categories, 16 items, 120s) — pool: 12+11+11+12 items
+- 3 difficulty levels, all on the **computer-devices theme** (2026-10-14; built from one `DEVICES` pool + `DEVICE_CATEGORIES` via `deviceTheme([...])`):
+  - Easy: Введення / Виведення (2 categories, 8 items, 80s) — pool 7+7
+  - Medium: + Зберігання (3 categories, 12 items, 100s) — pool 7+7+7
+  - Hard: + «Усередині ПК» (processor, RAM, cooler, PSU, motherboard, GPU) (4 categories, 16 items, 120s) — pool 7+7+7+6
+- Device items carry a `name`; such items render as `.drag-item.has-name` (emoji on top, caption below, `title` tooltip) and `data-emoji` is what lands in the zone. Zone colours per category live in `styles.css` (`[data-category="input|output|storage|inside"]`)
+- Old themes (fruits/vegetables, animals by habitat, seasons) stay in `THEMES` but are not wired to any level
 - Drag items to correct category zones
 - Touch support for mobile devices
 - Scoring: base points × combo multiplier + streak bonus

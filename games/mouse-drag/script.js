@@ -3,7 +3,7 @@ const DIFFICULTY = {
   easy: {
     name: 'Легкий',
     time: 80,
-    theme: 'fruitsVegetables',
+    theme: 'devicesEasy',
     itemsPerCategory: 4,  // 4 items × 2 categories = 8 total
     pointsPerItem: 10,
     streakBonus: 5
@@ -11,7 +11,7 @@ const DIFFICULTY = {
   medium: {
     name: 'Середній',
     time: 100,
-    theme: 'animals',
+    theme: 'devicesMedium',
     itemsPerCategory: 4,  // 4 items × 3 categories = 12 total
     pointsPerItem: 15,
     streakBonus: 8
@@ -19,14 +19,69 @@ const DIFFICULTY = {
   hard: {
     name: 'Важкий',
     time: 120,
-    theme: 'seasons',
+    theme: 'devicesHard',
     itemsPerCategory: 4,  // 4 items × 4 categories = 16 total
     pointsPerItem: 20,
     streakBonus: 10
   }
 };
 
+// ===== ТЕМА З ІНФОРМАТИКИ: ПРИСТРОЇ КОМП'ЮТЕРА =====
+// Кожен предмет має підпис (name), бо самого емодзі дитині може бути замало
+const DEVICE_CATEGORIES = {
+  input:   { id: 'input',   name: 'Введення',     icon: '⌨️' },
+  output:  { id: 'output',  name: 'Виведення',    icon: '🖥️' },
+  storage: { id: 'storage', name: 'Зберігання',   icon: '💾' },
+  inside:  { id: 'inside',  name: 'Усередині ПК', icon: '🧠' }
+};
+
+const DEVICES = [
+  // Пристрої введення
+  { emoji: '⌨️', name: 'Клавіатура',  category: 'input' },
+  { emoji: '🖱️', name: 'Миша',        category: 'input' },
+  { emoji: '🎤', name: 'Мікрофон',    category: 'input' },
+  { emoji: '📷', name: 'Веб-камера',  category: 'input' },
+  { emoji: '🎮', name: 'Геймпад',     category: 'input' },
+  { emoji: '🕹️', name: 'Джойстик',    category: 'input' },
+  { emoji: '🖊️', name: 'Стилус',      category: 'input' },
+  // Пристрої виведення
+  { emoji: '🖥️', name: 'Монітор',     category: 'output' },
+  { emoji: '🖨️', name: 'Принтер',     category: 'output' },
+  { emoji: '🔊', name: 'Колонки',     category: 'output' },
+  { emoji: '🎧', name: 'Навушники',   category: 'output' },
+  { emoji: '📽️', name: 'Проєктор',    category: 'output' },
+  { emoji: '📺', name: 'Телевізор',   category: 'output' },
+  { emoji: '🥽', name: 'VR-окуляри',  category: 'output' },
+  // Пристрої зберігання
+  { emoji: '💾', name: 'Дискета',       category: 'storage' },
+  { emoji: '💿', name: 'CD-диск',       category: 'storage' },
+  { emoji: '📀', name: 'DVD-диск',      category: 'storage' },
+  { emoji: '📼', name: 'Касета',        category: 'storage' },
+  { emoji: '🗄️', name: 'Жорсткий диск', category: 'storage' },
+  { emoji: '🗂️', name: 'Картка пам\'яті', category: 'storage' },
+  { emoji: '☁️', name: 'Хмара',         category: 'storage' },
+  // Усередині системного блоку (лише на важкому рівні)
+  { emoji: '🧠', name: 'Процесор',          category: 'inside' },
+  { emoji: '🧩', name: 'Оперативна пам\'ять', category: 'inside' },
+  { emoji: '🪭', name: 'Кулер',             category: 'inside' },
+  { emoji: '🔋', name: 'Блок живлення',     category: 'inside' },
+  { emoji: '🟩', name: 'Материнська плата', category: 'inside' },
+  { emoji: '🎞️', name: 'Відеокарта',        category: 'inside' }
+];
+
+function deviceTheme(categoryIds) {
+  return {
+    categories: categoryIds.map(id => DEVICE_CATEGORIES[id]),
+    items: DEVICES.filter(d => categoryIds.includes(d.category))
+  };
+}
+
 const THEMES = {
+  devicesEasy: deviceTheme(['input', 'output']),
+  devicesMedium: deviceTheme(['input', 'output', 'storage']),
+  devicesHard: deviceTheme(['input', 'output', 'storage', 'inside']),
+
+  // Запасні теми (зараз не підключені до рівнів)
   fruitsVegetables: {
     categories: [
       { id: 'fruits', name: 'Фрукти', icon: '🍎' },
@@ -352,10 +407,24 @@ function startGame(difficulty) {
   gameState.items.forEach((item, index) => {
     const itemEl = document.createElement('div');
     itemEl.className = 'drag-item';
-    itemEl.textContent = item.emoji;
     itemEl.draggable = true;
     itemEl.dataset.index = index;
     itemEl.dataset.category = item.category;
+    itemEl.dataset.emoji = item.emoji;
+    if (item.name) {
+      // Емодзі + підпис (теми з інформатики)
+      itemEl.classList.add('has-name');
+      const em = document.createElement('span');
+      em.className = 'item-emoji';
+      em.textContent = item.emoji;
+      const nm = document.createElement('span');
+      nm.className = 'item-name';
+      nm.textContent = item.name;
+      itemEl.append(em, nm);
+      itemEl.title = item.name;
+    } else {
+      itemEl.textContent = item.emoji;
+    }
 
     // Mouse drag events
     itemEl.addEventListener('dragstart', handleDragStart);
@@ -550,7 +619,8 @@ function processItemDrop(item, zone, isCorrect) {
     const zoneItems = zone.querySelector('.zone-items');
     const droppedItem = document.createElement('div');
     droppedItem.className = 'dropped-item';
-    droppedItem.textContent = item.textContent;
+    droppedItem.textContent = item.dataset.emoji || item.textContent;
+    if (item.title) droppedItem.title = item.title;
     zoneItems.appendChild(droppedItem);
 
     // Update zone count

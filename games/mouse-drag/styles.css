@@ -741,3 +741,82 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ===== ТЕМА "ПРИСТРОЇ КОМП'ЮТЕРА" (покращення 2026-10) ===== */
+
+/* Правила в меню */
+.rules-notes {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  display: grid;
+  gap: 6px;
+}
+.rules-notes li {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+}
+.rules-notes b { color: #fee140; font-weight: 700; }
+
+/* Предмет із підписом: емодзі зверху, назва знизу */
+.drag-item.has-name {
+  width: 96px;
+  height: 96px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 4px;
+  font-size: 2rem;
+  line-height: 1;
+}
+.drag-item.has-name .item-emoji {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+.drag-item.has-name .item-name {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #2b2350;
+  text-align: center;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* Кольори зон для категорій пристроїв */
+.drop-zone[data-category="input"]   { border-color: rgba(79, 172, 254, 0.5); }
+.drop-zone[data-category="input"].drag-over   { background: rgba(79, 172, 254, 0.2); border-color: #4facfe; }
+.drop-zone[data-category="output"]  { border-color: rgba(67, 233, 123, 0.5); }
+.drop-zone[data-category="output"].drag-over  { background: rgba(67, 233, 123, 0.2); border-color: #43e97b; }
+.drop-zone[data-category="storage"] { border-color: rgba(254, 225, 64, 0.5); }
+.drop-zone[data-category="storage"].drag-over { background: rgba(254, 225, 64, 0.2); border-color: #fee140; }
+.drop-zone[data-category="inside"]  { border-color: rgba(240, 147, 251, 0.5); }
+.drop-zone[data-category="inside"].drag-over  { background: rgba(240, 147, 251, 0.2); border-color: #f093fb; }
+
+@media (max-width: 500px) {
+  .rules-notes li { font-size: 0.8rem; }
+  .drag-item.has-name {
+    width: 68px;
+    height: 68px;
+    padding: 4px 2px;
+  }
+  .drag-item.has-name .item-emoji { font-size: 1.4rem; }
+  .drag-item.has-name .item-name { font-size: 0.55rem; }
+}
+@media (max-width: 400px) {
+  .drag-item.has-name {
+    width: 60px;
+    height: 60px;
+  }
+  .drag-item.has-name .item-emoji { font-size: 1.25rem; }
+  .drag-item.has-name .item-name { font-size: 0.5rem; }
+}
+
+/* Два ряди підписаних предметів мають вміститись без прокрутки */
+#items-container { max-height: 280px; }
+@media (max-width: 500px) {
+  #items-container { max-height: 190px; }
+}
