@@ -44,6 +44,9 @@ const DEVICES = [
   { emoji: '🎮', name: 'Геймпад',     category: 'input' },
   { emoji: '🕹️', name: 'Джойстик',    category: 'input' },
   { emoji: '🖊️', name: 'Стилус',      category: 'input' },
+  { emoji: '🖲️', name: 'Трекбол',     category: 'input' },
+  { emoji: '📹', name: 'Відеокамера', category: 'input' },
+  { emoji: '🎹', name: 'MIDI-клавіатура', category: 'input' },
   // Пристрої виведення
   { emoji: '🖥️', name: 'Монітор',     category: 'output' },
   { emoji: '🖨️', name: 'Принтер',     category: 'output' },
@@ -52,6 +55,9 @@ const DEVICES = [
   { emoji: '📽️', name: 'Проєктор',    category: 'output' },
   { emoji: '📺', name: 'Телевізор',   category: 'output' },
   { emoji: '🥽', name: 'VR-окуляри',  category: 'output' },
+  { emoji: '🧾', name: 'Чековий принтер',   category: 'output' },
+  { emoji: '🖼️', name: 'Цифрова фоторамка', category: 'output' },
+  { emoji: '🪧', name: 'Інформаційне табло', category: 'output' },
   // Пристрої зберігання
   { emoji: '💾', name: 'Дискета',       category: 'storage' },
   { emoji: '💿', name: 'CD-диск',       category: 'storage' },
@@ -59,6 +65,7 @@ const DEVICES = [
   { emoji: '📼', name: 'Касета',        category: 'storage' },
   { emoji: '💽', name: 'Жорсткий диск',   category: 'storage' },
   { emoji: '☁️', name: 'Хмарне сховище',  category: 'storage' },
+  { emoji: '🗄️', name: 'Файловий сервер', category: 'storage' },
   // Програми (лише на важкому рівні): апаратне vs програмне забезпечення
   { emoji: '🌐', name: 'Браузер',             category: 'programs' },
   { emoji: '📝', name: 'Текстовий редактор',  category: 'programs' },
@@ -67,7 +74,12 @@ const DEVICES = [
   { emoji: '📊', name: 'Електронні таблиці',  category: 'programs' },
   { emoji: '📧', name: 'Електронна пошта',    category: 'programs' },
   { emoji: '🎵', name: 'Музичний плеєр',      category: 'programs' },
-  { emoji: '🛡️', name: 'Антивірус',           category: 'programs' }
+  { emoji: '🛡️', name: 'Антивірус',           category: 'programs' },
+  { emoji: '🎬', name: 'Відеоплеєр',          category: 'programs' },
+  { emoji: '🗜️', name: 'Архіватор',           category: 'programs' },
+  { emoji: '🗺️', name: 'Карти',               category: 'programs' },
+  { emoji: '💬', name: 'Месенджер',           category: 'programs' },
+  { emoji: '📅', name: 'Календар',            category: 'programs' }
 ];
 
 function deviceTheme(categoryIds) {
