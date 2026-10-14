@@ -79,6 +79,10 @@
               <div class="level">+5 сек</div>
             </div>
           </div>
+          <ul class="rules-notes">
+            <li>🎈💨 Не встиг лопнути — кулька затремтить і відлетить: <b>−1 очко</b></li>
+            <li>🔥 Серія без промахів: <b>5 поспіль — ×2</b>, <b>10 поспіль — ×3</b> очок. Промах або бомба обриває серію</li>
+          </ul>
         </div>
 
         <a href="../../games.html" class="menu-back-btn">← Назад до ігор</a>
@@ -95,6 +99,11 @@
         <div class="hud-item hud-time">
           <span class="label">Час</span>
           <span class="value" id="time">60</span>
+        </div>
+        <div class="hud-item hud-streak" id="hud-streak">
+          <span class="label">Серія</span>
+          <span class="value"><span class="fire">🔥</span><span id="streak">0</span></span>
+          <span class="mult" id="mult">×1</span>
         </div>
         <div class="hud-item">
           <span class="label">Життя</span>
@@ -135,6 +144,14 @@
           <div class="stat-item">
             <div class="stat-value" id="stat-accuracy">0%</div>
             <div class="stat-label">точність</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-streak">0</div>
+            <div class="stat-label">найдовша серія</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-escaped">0</div>
+            <div class="stat-label">відлетіло</div>
           </div>
         </div>
 

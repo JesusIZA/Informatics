@@ -557,3 +557,128 @@ body {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ===== ВІДЛІТ КУЛЬКИ ТА СЕРІЯ (покращення 2026-10) ===== */
+
+/* Правила в меню під типами кульок */
+.rules-notes {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  display: grid;
+  gap: 6px;
+}
+.rules-notes li {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+}
+.rules-notes b { color: #fee140; font-weight: 700; }
+
+/* Кулька тремтить перед відльотом */
+.balloon.leaving {
+  animation: leaveWobble 0.35s ease-in-out infinite;
+}
+.balloon.golden.leaving {
+  animation: leaveWobble 0.35s ease-in-out infinite, glow 1s ease-in-out infinite alternate;
+}
+@keyframes leaveWobble {
+  0%, 100% { transform: rotate(-9deg); }
+  50%      { transform: rotate(9deg); }
+}
+
+/* Кулька відлітає вгору: витягується і блідне */
+.balloon.escaping {
+  transform: scaleY(1.08);
+  filter: brightness(1.15);
+  opacity: 0.85 !important;
+}
+.balloon.escaping:hover { transform: scaleY(1.08) scale(1.05); }
+
+/* HUD: серія та множник */
+.hud-streak .value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #ffa94d;
+}
+.hud-streak .fire {
+  font-size: 1rem;
+  opacity: 0.35;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.hud-streak .mult {
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+}
+.hud-streak.on-fire .fire {
+  opacity: 1;
+  transform: scale(1.15);
+  animation: firePulse 0.8s ease-in-out infinite;
+}
+.hud-streak.on-fire .mult {
+  background: linear-gradient(135deg, #ff9f1c, #f5576c);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(255, 159, 28, 0.6);
+}
+@keyframes firePulse {
+  0%, 100% { transform: scale(1.1); }
+  50%      { transform: scale(1.35); }
+}
+.hud-streak.broken {
+  animation: streakShake 0.4s ease-in-out;
+}
+@keyframes streakShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+/* Банер нового множника посеред поля */
+.mult-banner {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-head);
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+  pointer-events: none;
+  z-index: 20;
+  text-shadow: 0 0 18px rgba(255, 159, 28, 0.9), 0 4px 10px rgba(0, 0, 0, 0.5);
+  animation: multBanner 1s ease-out forwards;
+}
+@keyframes multBanner {
+  0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  25%  { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  70%  { transform: translate(-50%, -60%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -90%) scale(0.9); opacity: 0; }
+}
+
+/* Чотири показники на екрані результату */
+.result-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 40px; justify-items: center; }
+
+@media (max-width: 500px) {
+  .rules-notes li { font-size: 0.8rem; }
+  .hud-streak .mult { font-size: 0.75rem; padding: 2px 6px; }
+  .mult-banner { font-size: 2.2rem; }
+  .result-stats { display: grid; grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .balloon.leaving, .hud-streak.on-fire .fire, .hud-streak.broken {
+    animation: none !important;
+  }
+  .balloon.leaving { outline: 3px dashed rgba(255, 255, 255, 0.8); }
+  .mult-banner { animation-duration: 0.01ms !important; }
+}

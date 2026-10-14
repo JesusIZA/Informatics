@@ -128,6 +128,8 @@ Contains all CSS styles organized in sections:
 - 3 difficulty levels (easy, medium, hard)
 - Types: normal (+1), golden (+5), bomb (-1 life), time bonus (+5 sec)
 - 60 seconds gameplay, 3 lives
+- **Escape rule** (2026-10-14): every balloon has a `lifetime` per difficulty (easy 8 s, medium 6.5 s, hard 5 s; paused time doesn't count). 1.5 s before it ends the balloon wobbles (`.leaving`), then it stops bouncing and flies straight up (`.escaping`, still clickable). Once it leaves the top edge: −1 point (never below 0), streak reset, `-1` popup, `bad` sound; bombs fly away with no penalty. Result screen shows "відлетіло".
+- **Streak multiplier**: consecutive pops without a miss; 5+ → ×2, 10+ → ×3 (`STREAK_TIERS`). A miss = pointerdown on the game area outside any `.balloon`, a bomb, or an escaped balloon. HUD shows 🔥 streak + `×N` chip (`.on-fire` glow, `.broken` shake), a `.mult-banner` flashes when the tier rises. Result screen shows "найдовша серія". Menu lists both rules under the balloon types (`.rules-notes`).
 - High scores saved in localStorage (`balloonGameRecords`)
 
 ### Keyboard Letters Game (`games/keyboard-letters/`)

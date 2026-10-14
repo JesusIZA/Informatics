@@ -7,7 +7,8 @@ const DIFFICULTY = {
     speedMin: 80,
     speedMax: 150,
     spawnInterval: 1500,
-    bombChance: 0
+    bombChance: 0,
+    lifetime: 8000      // мс до того, як кулька сама відлетить
   },
   medium: {
     name: 'Середній',
@@ -16,7 +17,8 @@ const DIFFICULTY = {
     speedMin: 120,
     speedMax: 200,
     spawnInterval: 1000,
-    bombChance: 0.1
+    bombChance: 0.1,
+    lifetime: 6500
   },
   hard: {
     name: 'Важкий',
@@ -25,7 +27,8 @@ const DIFFICULTY = {
     speedMin: 180,
     speedMax: 280,
     spawnInterval: 700,
-    bombChance: 0.2
+    bombChance: 0.2,
+    lifetime: 5000
   }
 };
 
@@ -45,22 +48,47 @@ const INITIAL_LIVES = 3;
 const GOLDEN_CHANCE = 0.08;
 const TIME_BONUS_CHANCE = 0.05;
 
+// Кулька, яку не лопнули за lifetime, відлітає вгору і забирає очко
+const ESCAPE_WARN = 1500;      // мс до відльоту кулька починає тремтіти
+const ESCAPE_SPEED = 420;      // px/с підйому під час відльоту
+const ESCAPE_PENALTY = 1;
+
+// Серія влучень без промахів дає множник очок
+const STREAK_TIERS = [
+  { min: 10, mult: 3 },
+  { min: 5, mult: 2 }
+];
+
+function multiplierFor(streak) {
+  const tier = STREAK_TIERS.find(t => streak >= t.min);
+  return tier ? tier.mult : 1;
+}
+
+function freshState(difficulty) {
+  return {
+    isRunning: true,
+    isPaused: false,
+    difficulty: difficulty,
+    score: 0,
+    lives: INITIAL_LIVES,
+    timeLeft: GAME_DURATION,
+    balloons: [],
+    balloonsPopped: 0,
+    balloonsEscaped: 0,
+    totalClicks: 0,
+    streak: 0,
+    bestStreak: 0,
+    multiplier: 1,
+    spawnTimer: null,
+    gameTimer: null,
+    lastTimestamp: 0,
+    animationFrameId: null
+  };
+}
+
 // ===== GAME STATE =====
-let gameState = {
-  isRunning: false,
-  isPaused: false,
-  difficulty: 'easy',
-  score: 0,
-  lives: INITIAL_LIVES,
-  timeLeft: GAME_DURATION,
-  balloons: [],
-  balloonsPopped: 0,
-  totalClicks: 0,
-  spawnTimer: null,
-  gameTimer: null,
-  lastTimestamp: 0,
-  animationFrameId: null
-};
+let gameState = freshState('easy');
+gameState.isRunning = false;
 
 // ===== DOM ELEMENTS =====
 const screens = {
@@ -84,6 +112,11 @@ const elements = {
   resultTitle: document.getElementById('result-title'),
   statPopped: document.getElementById('stat-popped'),
   statAccuracy: document.getElementById('stat-accuracy'),
+  statStreak: document.getElementById('stat-streak'),
+  statEscaped: document.getElementById('stat-escaped'),
+  hudStreak: document.getElementById('hud-streak'),
+  streak: document.getElementById('streak'),
+  mult: document.getElementById('mult'),
   playAgainBtn: document.getElementById('play-again-btn'),
   backMenuBtn: document.getElementById('back-menu-btn')
 };
@@ -98,6 +131,10 @@ class Balloon {
     this.speed = config.speed;
     this.type = config.type;
     this.direction = config.direction;
+    this.lifetime = config.lifetime;
+    this.age = 0;              // мс життя (пауза не рахується)
+    this.isWarning = false;    // тремтить перед відльотом
+    this.isEscaping = false;   // летить угору за край
     this.element = null;
     this.isPopped = false;
 
@@ -142,6 +179,23 @@ class Balloon {
   update(dt) {
     if (this.isPopped) return;
 
+    // Відліт: кулька більше не відбивається від стінок, а піднімається за верхній край
+    if (this.isEscaping) {
+      this.y -= ESCAPE_SPEED * dt;
+      if (this.y < -this.size * 1.4) this.escaped();
+      return;
+    }
+
+    this.age += dt * 1000;
+    if (this.age >= this.lifetime) {
+      this.startEscape();
+      return;
+    }
+    if (!this.isWarning && this.age >= this.lifetime - ESCAPE_WARN) {
+      this.isWarning = true;
+      this.element.classList.add('leaving');
+    }
+
     const dx = Math.cos(this.direction) * this.speed * dt;
     const dy = Math.sin(this.direction) * this.speed * dt;
 
@@ -170,6 +224,28 @@ class Balloon {
     }
   }
 
+  startEscape() {
+    this.isEscaping = true;
+    this.element.classList.remove('leaving');
+    this.element.classList.add('escaping');
+    // Кульку, що відлітає, ще можна встигнути лопнути
+  }
+
+  escaped() {
+    if (this.isPopped) return;
+    this.isPopped = true;
+
+    if (this.type !== 'bomb') {
+      gameState.balloonsEscaped++;
+      gameState.score = Math.max(0, gameState.score - ESCAPE_PENALTY);
+      updateHUD();
+      breakStreak();
+      GameKit.play('bad');
+      showScorePopup(this.x + this.size / 2, 8, `-${ESCAPE_PENALTY}`, 'negative');
+    }
+    this.remove();
+  }
+
   onClick(e) {
     if (this.isPopped || gameState.isPaused) return;
     if (e.button !== undefined && e.button !== 0) return; // лише ліва кнопка / дотик
@@ -189,17 +265,14 @@ class Balloon {
     switch (this.type) {
       case 'normal':
         points = 1;
-        popupText = '+1';
-        gameState.balloonsPopped++;
         break;
       case 'golden':
         points = 5;
-        popupText = '+5';
         popupClass = 'golden';
-        gameState.balloonsPopped++;
         break;
       case 'bomb':
         loseLife();
+        breakStreak();
         popupText = '💥';
         popupClass = 'negative';
         break;
@@ -208,13 +281,16 @@ class Balloon {
         gameState.timeLeft += 5;
         popupText = '+5s';
         popupClass = 'time';
-        gameState.balloonsPopped++;
         break;
     }
 
-    if (points !== 0) {
+    if (this.type !== 'bomb') {
+      gameState.balloonsPopped++;
+      registerHit();                       // серія росте до нарахування очок
+      points *= gameState.multiplier;
       gameState.score += points;
       updateHUD();
+      if (this.type !== 'time-bonus') popupText = `+${points}`;
     }
     if (this.type !== 'bomb') GameKit.play(this.type === 'normal' ? 'pop' : 'bonus');
 
@@ -263,24 +339,11 @@ function saveRecord(difficulty, score) {
 }
 
 function startGame(difficulty) {
-  gameState = {
-    isRunning: true,
-    isPaused: false,
-    difficulty: difficulty,
-    score: 0,
-    lives: INITIAL_LIVES,
-    timeLeft: GAME_DURATION,
-    balloons: [],
-    balloonsPopped: 0,
-    totalClicks: 0,
-    spawnTimer: null,
-    gameTimer: null,
-    lastTimestamp: 0,
-    animationFrameId: null
-  };
+  gameState = freshState(difficulty);
 
   elements.gameArea.innerHTML = '';
   updateHUD();
+  updateStreakHUD();
   updateLivesDisplay();
   showScreen('game');
 
@@ -358,7 +421,8 @@ function spawnBalloon() {
     size: size,
     speed: speed,
     type: type,
-    direction: Math.random() * Math.PI * 2
+    direction: Math.random() * Math.PI * 2,
+    lifetime: config.lifetime
   });
 
   gameState.balloons.push(balloon);
@@ -372,8 +436,51 @@ function spawnBalloon() {
   }
 }
 
-function onGameAreaClick() {
+function onGameAreaClick(e) {
   gameState.totalClicks++;
+  // Клік повз кульку — промах, серія обривається
+  if (!e.target.closest('.balloon')) breakStreak();
+}
+
+// ===== СЕРІЯ ТА МНОЖНИК =====
+function registerHit() {
+  gameState.streak++;
+  gameState.bestStreak = Math.max(gameState.bestStreak, gameState.streak);
+
+  const mult = multiplierFor(gameState.streak);
+  if (mult > gameState.multiplier) {
+    gameState.multiplier = mult;
+    showMultiplierBanner(mult);
+    GameKit.play('good');
+  }
+  updateStreakHUD();
+}
+
+function breakStreak() {
+  if (gameState.streak === 0) return;
+  gameState.streak = 0;
+  gameState.multiplier = 1;
+  updateStreakHUD(true);
+}
+
+function updateStreakHUD(broken = false) {
+  elements.streak.textContent = gameState.streak;
+  elements.mult.textContent = `×${gameState.multiplier}`;
+  elements.hudStreak.classList.toggle('on-fire', gameState.multiplier > 1);
+
+  if (broken) {
+    elements.hudStreak.classList.remove('broken');
+    void elements.hudStreak.offsetWidth; // перезапуск анімації
+    elements.hudStreak.classList.add('broken');
+  }
+}
+
+function showMultiplierBanner(mult) {
+  const banner = document.createElement('div');
+  banner.className = 'mult-banner';
+  banner.textContent = `×${mult} серія!`;
+  elements.gameArea.appendChild(banner);
+  setTimeout(() => banner.remove(), 1000);
 }
 
 function showScorePopup(x, y, text, className) {
@@ -450,6 +557,8 @@ function endGame() {
   elements.finalScore.textContent = gameState.score;
   elements.statPopped.textContent = gameState.balloonsPopped;
   elements.statAccuracy.textContent = `${accuracy}%`;
+  elements.statStreak.textContent = gameState.bestStreak;
+  elements.statEscaped.textContent = gameState.balloonsEscaped;
 
   if (isNewRecord) {
     elements.newRecord.style.display = 'inline-block';
