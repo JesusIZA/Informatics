@@ -98,3 +98,85 @@
   .countdown-number.go { font-size: 3.4rem; }
   .sound-toggle { width: 36px; height: 36px; font-size: 1rem; top: 8px; right: 8px; }
 }
+
+/* ===== ПРАВИЛА ГРИ В МЕНЮ: картки з іконкою, заголовком і коротким текстом =====
+   Розмітка:
+   <div class="rules-notes">
+     <div class="rule">
+       <span class="rule-icon">🔥</span>
+       <div class="rule-body">
+         <div class="rule-title">Серія без промахів <span class="rule-tag">Важкий</span></div>
+         <div class="rule-text">Короткий опис одним-двома реченнями.</div>
+       </div>
+     </div>
+   </div>
+   .rules-notes.grid — дві колонки на широких екранах (для легенд категорій) */
+.rules-notes {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+}
+.rules-notes.grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.rule {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.rule-icon {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.rule-body { min-width: 0; }
+.rule-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+.rule-text {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.rule-text b { color: #fee140; font-weight: 700; }
+.rule-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(254, 225, 64, 0.18);
+  color: #fee140;
+  border: 1px solid rgba(254, 225, 64, 0.35);
+  white-space: nowrap;
+}
+
+@media (max-width: 500px) {
+  .rules-notes.grid { grid-template-columns: 1fr; }
+  .rule { padding: 10px 12px; gap: 10px; }
+  .rule-icon { flex-basis: 34px; width: 34px; height: 34px; font-size: 1.15rem; border-radius: 10px; }
+  .rule-title { font-size: 0.9rem; }
+  .rule-text { font-size: 0.8rem; }
+}

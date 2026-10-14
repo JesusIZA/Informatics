@@ -560,22 +560,6 @@ body {
 
 /* ===== ВІДЛІТ КУЛЬКИ ТА СЕРІЯ (покращення 2026-10) ===== */
 
-/* Правила в меню під типами кульок */
-.rules-notes {
-  list-style: none;
-  margin: 14px 0 0;
-  padding: 12px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: left;
-  display: grid;
-  gap: 6px;
-}
-.rules-notes li {
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.65);
-}
-.rules-notes b { color: #fee140; font-weight: 700; }
 
 /* Кулька тремтить перед відльотом */
 .balloon.leaving {
@@ -669,7 +653,6 @@ body {
 .result-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 40px; justify-items: center; }
 
 @media (max-width: 500px) {
-  .rules-notes li { font-size: 0.8rem; }
   .hud-streak .mult { font-size: 0.75rem; padding: 2px 6px; }
   .mult-banner { font-size: 2.2rem; }
   .result-stats { display: grid; grid-template-columns: repeat(2, 1fr); }

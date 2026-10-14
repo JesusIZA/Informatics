@@ -747,22 +747,6 @@ body {
 
 /* ===== РУХОМІ МІШЕНІ ТА СЕРІЯ ЯБЛУЧОК (покращення 2026-10) ===== */
 
-/* Правила в меню */
-.rules-notes {
-  list-style: none;
-  margin: 14px 0 0;
-  padding: 12px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: left;
-  display: grid;
-  gap: 6px;
-}
-.rules-notes li {
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.65);
-}
-.rules-notes b { color: #fee140; font-weight: 700; }
 
 /* Рухома мішень: позиція керується скриптом, без переходів */
 .target.moving {
@@ -819,7 +803,6 @@ body {
 }
 
 @media (max-width: 500px) {
-  .rules-notes li { font-size: 0.8rem; }
   .bullseye-banner .big { font-size: 1.6rem; }
   .bullseye-banner .bonus { font-size: 1.2rem; }
 }

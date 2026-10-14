@@ -744,22 +744,6 @@ body {
 
 /* ===== ТЕМА "ПРИСТРОЇ КОМП'ЮТЕРА" (покращення 2026-10) ===== */
 
-/* Правила в меню */
-.rules-notes {
-  list-style: none;
-  margin: 14px 0 0;
-  padding: 12px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: left;
-  display: grid;
-  gap: 6px;
-}
-.rules-notes li {
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.65);
-}
-.rules-notes b { color: #fee140; font-weight: 700; }
 
 /* Предмет із підписом: емодзі зверху, назва знизу */
 .drag-item.has-name {
@@ -797,7 +781,6 @@ body {
 .drop-zone[data-category="inside"].drag-over  { background: rgba(240, 147, 251, 0.2); border-color: #f093fb; }
 
 @media (max-width: 500px) {
-  .rules-notes li { font-size: 0.8rem; }
   .drag-item.has-name {
     width: 68px;
     height: 68px;
