@@ -628,13 +628,15 @@ function processItemDrop(item, zone, isCorrect) {
     const count = zoneItems.children.length;
     zone.querySelector('.zone-count').textContent = `${count} предметів`;
 
-    // Animate and remove item
+    // Коротка анімація і швидке зникнення: при швидкій грі довге зникання
+    // плутало, бо предмет ще висів у списку після правильного ходу
     item.classList.add('correct');
+    item.draggable = false;
     setTimeout(() => {
       if (item.parentNode) {
         item.parentNode.removeChild(item);
       }
-    }, 500);
+    }, 150);
 
     gameState.completedItems++;
     updateHUD();

@@ -175,6 +175,7 @@ Contains all CSS styles organized in sections:
   - Easy: Введення / Виведення (2 categories, 8 items, 80s) — pool 7+7
   - Medium: + Зберігання (3 categories, 12 items, 100s) — pool 7+7+6
   - Hard: + «Програми» (browser, text editor, calculator, antivirus…) (4 categories, 16 items, 120s) — pool 7+7+6+8. An "inside the PC" category (CPU, RAM, cooler…) was tried first and dropped: there are no recognisable emoji for those parts (the user flagged 🪭 "Кулер")
+- A correct drop removes the item after 150 ms (`.drag-item.correct` shrink animation, `draggable=false`, `pointer-events:none`); the original 500 ms felt laggy in fast play (user feedback 2026-10-14)
 - Every emoji must read as its caption; keep names informatics-precise ("Хмарне сховище", not "Хмара"). Device items carry a `name`; such items render as `.drag-item.has-name` (108px tile, emoji on top, 0.8rem caption below, `title` tooltip) and `data-emoji` is what lands in the zone. Zone colours per category live in `styles.css` (`[data-category="input|output|storage|programs"]`)
 - Old themes (fruits/vegetables, animals by habitat, seasons) stay in `THEMES` but are not wired to any level
 - Drag items to correct category zones

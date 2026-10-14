@@ -298,7 +298,8 @@ body {
 }
 
 .drag-item.correct {
-  animation: correctItem 0.5s ease forwards;
+  animation: correctItem 0.15s ease-out forwards;
+  pointer-events: none;
 }
 
 @keyframes correctItem {
