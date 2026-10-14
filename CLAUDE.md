@@ -124,7 +124,7 @@ Contains all CSS styles organized in sections:
 - Listed on games.html under the category "Вікторини" (`.category-quiz`, `.game-card-quiz`, colors per theme in `styles.css`); the name is deliberately age-neutral (user rejected "Для початкової школи")
 
 ### Mouse Click Game (`games/mouse-click/`)
-- Pop balloons by clicking them
+- Pop balloons by clicking them. Hits are registered on `pointerdown` (not `click` — a moving balloon escapes between mousedown and mouseup, which felt laggy on hard), and each balloon has an invisible `.hit` child extending 12px beyond its shape as a larger hit area. The game-area `pointerdown` listener counts all presses for accuracy (balloon handler must NOT stop propagation).
 - 3 difficulty levels (easy, medium, hard)
 - Types: normal (+1), golden (+5), bomb (-1 life), time bonus (+5 sec)
 - 60 seconds gameplay, 3 lives
@@ -155,7 +155,7 @@ Contains all CSS styles organized in sections:
 - High scores saved in localStorage (`keyboardTypingRecords`)
 
 ### Memory Pairs Game (`games/memory-pairs/`)
-- Classic memory card matching game
+- Classic memory card matching game. A mismatch no longer blocks input for `flipBackDelay`: clicking a third card cancels `gameState.mismatchTimer`, unflips the wrong pair immediately and flips the new card (user request 2026-10-14)
 - 3 difficulty levels with different grid sizes:
   - Easy (3×4, 6 pairs, 80s)
   - Medium (4×4, 8 pairs, 100s)

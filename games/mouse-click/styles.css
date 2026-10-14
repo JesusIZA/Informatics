@@ -269,7 +269,7 @@ body {
   position: absolute;
   border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  touch-action: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -288,6 +288,14 @@ body {
   height: 20%;
   background: rgba(255, 255, 255, 0.4);
   border-radius: 50%;
+}
+
+/* Збільшена невидима зона влучання (на 12px з кожного боку) */
+.balloon .hit {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: transparent;
 }
 
 .balloon::after {

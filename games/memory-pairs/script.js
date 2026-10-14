@@ -63,6 +63,7 @@ let gameState = {
   bestStreak: 0,
   multiplier: 1,
   isProcessing: false,
+  mismatchTimer: null,
   gameTimer: null,
   lastMatchTime: 0,
   startTime: 0
@@ -247,6 +248,7 @@ function startGame(difficulty) {
     bestStreak: 0,
     multiplier: 1,
     isProcessing: false,
+  mismatchTimer: null,
     gameTimer: null,
     lastMatchTime: 0,
     startTime: Date.now()
@@ -279,8 +281,19 @@ function startGame(difficulty) {
 
 function handleCardClick(card) {
   if (!gameState.isRunning || gameState.isPaused) return;
-  if (gameState.isProcessing) return;
   if (card.isFlipped || card.isMatched) return;
+
+  // Якщо гравець клікає під час показу невдалої пари — одразу закриваємо її
+  // і продовжуємо, не чекаючи кінця анімації
+  if (gameState.mismatchTimer) {
+    clearTimeout(gameState.mismatchTimer);
+    gameState.mismatchTimer = null;
+    gameState.flippedCards.forEach(c => { c.element.classList.remove('wrong'); c.unflip(); });
+    gameState.flippedCards = [];
+    gameState.isProcessing = false;
+  }
+
+  if (gameState.isProcessing) return;
   if (gameState.flippedCards.length >= 2) return;
 
   card.flip();
@@ -359,7 +372,8 @@ function checkMatch() {
     card1.setWrong();
     card2.setWrong();
 
-    setTimeout(() => {
+    gameState.mismatchTimer = setTimeout(() => {
+      gameState.mismatchTimer = null;
       card1.unflip();
       card2.unflip();
       gameState.flippedCards = [];

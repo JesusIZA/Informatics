@@ -128,7 +128,14 @@ class Balloon {
       this.element.style.color = '#ffd700';
     }
 
-    this.element.addEventListener('click', (e) => this.onClick(e));
+    // Невидима збільшена зона влучання: кулька рухається, тож дітям легше поцілити
+    const hit = document.createElement('span');
+    hit.className = 'hit';
+    this.element.appendChild(hit);
+
+    // pointerdown замість click: click спрацьовує лише якщо натискання і відпускання
+    // припали на той самий елемент, а рухома кулька за цей час устигає втекти
+    this.element.addEventListener('pointerdown', (e) => this.onClick(e));
     elements.gameArea.appendChild(this.element);
   }
 
@@ -165,8 +172,9 @@ class Balloon {
 
   onClick(e) {
     if (this.isPopped || gameState.isPaused) return;
-    e.stopPropagation();
-    this.pop();
+    if (e.button !== undefined && e.button !== 0) return; // лише ліва кнопка / дотик
+    e.preventDefault();
+    this.pop(); // подію не зупиняємо: gameArea рахує всі натискання для точності
   }
 
   pop() {
@@ -276,7 +284,7 @@ function startGame(difficulty) {
   showScreen('game');
 
   // Track clicks for accuracy
-  elements.gameArea.addEventListener('click', onGameAreaClick);
+  elements.gameArea.addEventListener('pointerdown', onGameAreaClick);
 
   // Wait for the screen to render before spawning balloons
   requestAnimationFrame(() => {
@@ -425,7 +433,7 @@ function endGame() {
   clearInterval(gameState.gameTimer);
   cancelAnimationFrame(gameState.animationFrameId);
 
-  elements.gameArea.removeEventListener('click', onGameAreaClick);
+  elements.gameArea.removeEventListener('pointerdown', onGameAreaClick);
   elements.pauseOverlay.classList.remove('active');
 
   // Calculate stats
@@ -467,7 +475,7 @@ function quitToMenu() {
   clearInterval(gameState.gameTimer);
   cancelAnimationFrame(gameState.animationFrameId);
 
-  elements.gameArea.removeEventListener('click', onGameAreaClick);
+  elements.gameArea.removeEventListener('pointerdown', onGameAreaClick);
   elements.pauseOverlay.classList.remove('active');
 
   showScreen('menu');
