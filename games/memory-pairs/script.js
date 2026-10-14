@@ -5,28 +5,39 @@ const DIFFICULTY = {
     cols: 4,
     rows: 3,
     time: 80,
-    themes: ['animals'],
-    flipBackDelay: 1000
+    themes: ['devices'],
+    flipBackDelay: 1000,
+    preview: 2000        // мс: усі картки відкриті перед стартом
   },
   medium: {
     name: 'Середній',
     cols: 4,
     rows: 4,
     time: 100,
-    themes: ['animals', 'food'],
-    flipBackDelay: 1000
+    themes: ['devices', 'apps'],
+    flipBackDelay: 1000,
+    preview: 0
   },
   hard: {
     name: 'Важкий',
     cols: 5,
     rows: 4,
     time: 120,
-    themes: ['animals', 'food', 'transport'],
-    flipBackDelay: 800
+    themes: ['devices', 'apps', 'keys'],
+    flipBackDelay: 800,
+    preview: 0
   }
 };
 
+// Елемент теми — емодзі (рядок) або об'єкт { text, kind: 'key' } для клавіші-ковпачка
 const CARD_THEMES = {
+  // Тематика інформатики (використовується у грі)
+  devices: ['🖥️', '💻', '⌨️', '🖱️', '🖨️', '📱', '🎧', '📷', '🔌', '💾', '📀', '🕹️'],
+  apps: ['📁', '📝', '🧮', '🎨', '🌐', '📧', '🎵', '🎬', '🔒', '🗑️', '📊', '🔍'],
+  keys: ['Enter', 'Esc', 'Shift', 'Ctrl', 'Alt', 'Tab', 'Space', 'Del', 'Caps', 'F1', 'Home', 'End']
+    .map(text => ({ text, kind: 'key' })),
+
+  // Запасні набори (зараз не підключені до рівнів)
   animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮'],
   food: ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑', '🥝', '🍍'],
   transport: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🛵'],
@@ -63,7 +74,9 @@ let gameState = {
   bestStreak: 0,
   multiplier: 1,
   isProcessing: false,
+  isPreview: false,
   mismatchTimer: null,
+  previewTimer: null,
   gameTimer: null,
   lastMatchTime: 0,
   startTime: 0
@@ -77,6 +90,7 @@ const screens = {
 };
 
 const elements = {
+  gameArea: document.getElementById('game-area'),
   cardsGrid: document.getElementById('cards-grid'),
   score: document.getElementById('score'),
   time: document.getElementById('time'),
@@ -100,9 +114,10 @@ const elements = {
 
 // ===== CARD CLASS =====
 class Card {
-  constructor(emoji, index) {
+  constructor(face, index) {
     this.id = index;
-    this.emoji = emoji;
+    this.face = typeof face === 'string' ? { text: face, kind: 'emoji' } : face;
+    this.emoji = this.face.text;   // ключ для порівняння пари
     this.isFlipped = false;
     this.isMatched = false;
     this.element = null;
@@ -121,6 +136,7 @@ class Card {
 
     const front = document.createElement('div');
     front.className = 'card-front';
+    if (this.face.kind === 'key') front.classList.add('key');
     front.textContent = this.emoji;
 
     inner.appendChild(back);
@@ -249,7 +265,9 @@ function startGame(difficulty) {
     bestStreak: 0,
     multiplier: 1,
     isProcessing: false,
-  mismatchTimer: null,
+    isPreview: false,
+    mismatchTimer: null,
+    previewTimer: null,
     gameTimer: null,
     lastMatchTime: 0,
     startTime: Date.now()
@@ -267,6 +285,50 @@ function startGame(difficulty) {
 
   updateHUD();
   showScreen('game');
+
+  if (config.preview > 0) {
+    showPreview(config.preview);
+  } else {
+    beginPlay();
+  }
+}
+
+// Легкий рівень: усі картки відкриті кілька секунд, щоб дитина запам'ятала
+function showPreview(duration) {
+  gameState.isPreview = true;
+  gameState.isProcessing = true;
+
+  const banner = document.createElement('div');
+  banner.className = 'preview-banner';
+  banner.style.setProperty('--preview', `${duration}ms`);
+  banner.innerHTML = '<span class="preview-text">👀 Запам\'ятай!</span><span class="preview-bar"></span>';
+  elements.gameArea.appendChild(banner);
+
+  // Відкриваємо після того, як сітка намалювалась, щоб спрацювала анімація перевороту
+  requestAnimationFrame(() => {
+    gameState.cards.forEach(card => card.element.classList.add('flipped'));
+  });
+
+  gameState.previewTimer = setTimeout(() => {
+    gameState.previewTimer = null;
+    banner.remove();
+    gameState.cards.forEach(card => card.element.classList.remove('flipped'));
+    gameState.isPreview = false;
+    gameState.isProcessing = false;
+    beginPlay();
+  }, duration);
+}
+
+function clearPreview() {
+  clearTimeout(gameState.previewTimer);
+  gameState.previewTimer = null;
+  gameState.isPreview = false;
+  const banner = elements.gameArea.querySelector('.preview-banner');
+  if (banner) banner.remove();
+}
+
+function beginPlay() {
+  gameState.startTime = Date.now();
 
   // Start timer
   gameState.gameTimer = setInterval(() => {
@@ -421,6 +483,7 @@ function updateHUD() {
 }
 
 function pauseGame() {
+  if (gameState.isPreview) return; // під час показу карток пауза не потрібна
   gameState.isPaused = true;
   elements.pauseOverlay.classList.add('active');
 }
@@ -433,6 +496,7 @@ function resumeGame() {
 function endGame(isWin) {
   gameState.isRunning = false;
 
+  clearPreview();
   clearInterval(gameState.gameTimer);
   elements.pauseOverlay.classList.remove('active');
 
@@ -485,6 +549,7 @@ function endGame(isWin) {
 function quitToMenu() {
   gameState.isRunning = false;
 
+  clearPreview();
   clearInterval(gameState.gameTimer);
   elements.pauseOverlay.classList.remove('active');
 

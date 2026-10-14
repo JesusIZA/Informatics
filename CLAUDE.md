@@ -159,10 +159,10 @@ Contains all CSS styles organized in sections:
 ### Memory Pairs Game (`games/memory-pairs/`)
 - Classic memory card matching game. A mismatch no longer blocks input for `flipBackDelay`: clicking a third card cancels `gameState.mismatchTimer`, unflips the wrong pair immediately and flips the new card (user request 2026-10-14)
 - 3 difficulty levels with different grid sizes:
-  - Easy (3×4, 6 pairs, 80s)
+  - Easy (3×4, 6 pairs, 80s) — **2 s preview**: after the countdown all cards are shown face-up with a "👀 Запам'ятай!" banner and a shrinking bar (`.preview-banner`, `DIFFICULTY.easy.preview`); clicks and pause are blocked, the timer starts only after the cards close (`showPreview` → `beginPlay`)
   - Medium (4×4, 8 pairs, 100s)
   - Hard (4×5, 10 pairs, 120s)
-- Card themes: animals, food, transport (emoji)
+- Card themes are informatics-themed (2026-10-14): `devices` (🖥️ 💻 ⌨️ 🖱️ …) on easy, + `apps` (📁 📝 🧮 🎨 🌐 …) on medium, + `keys` on hard. Key cards are objects `{ text, kind: 'key' }` rendered as white key-caps with the label (`.card-front.key`); pairs are compared by `card.emoji` (the text). Old emoji sets (animals, food, transport, …) remain in `CARD_THEMES` but are not wired to any level
 - 3D flip animation for cards
 - Scoring: base points (10) + speed bonus (+5 if <3s) × combo multiplier
 - Combo system: 2+ streak = ×1.5, 3+ = ×2, 5+ = ×3

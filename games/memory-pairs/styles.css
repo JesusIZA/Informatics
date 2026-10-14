@@ -658,3 +658,102 @@ body {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ===== ТЕМИ З ІНФОРМАТИКИ ТА ПОКАЗ КАРТОК (покращення 2026-10) ===== */
+
+/* Правила в меню */
+.rules-notes {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  display: grid;
+  gap: 6px;
+}
+.rules-notes li {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+}
+.rules-notes b { color: #fee140; font-weight: 700; }
+
+/* Картка-клавіша: ковпачок із написом замість емодзі */
+.card-front.key {
+  font-family: var(--font-head);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #2b2350;
+  background: linear-gradient(180deg, #ffffff 0%, #ececf5 100%);
+  box-shadow: inset 0 -6px 0 #c9c6dc, inset 0 2px 0 #ffffff, 0 4px 15px rgba(0, 0, 0, 0.3);
+  padding: 0 6px 6px;
+  text-align: center;
+  word-break: keep-all;
+}
+.card.matched .card-front.key {
+  background: rgba(67, 233, 123, 0.2);
+  box-shadow: inset 0 -6px 0 rgba(67, 233, 123, 0.35), 0 0 20px rgba(67, 233, 123, 0.5);
+  color: #e6ffef;
+}
+
+/* Банер "Запам'ятай!" поверх поля під час показу карток */
+#game-area { position: relative; }
+.preview-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px 12px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+  animation: previewIn 0.3s ease-out;
+}
+.preview-text {
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fee140;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.preview-bar {
+  display: block;
+  width: 160px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #43e97b, #38f9d7);
+  transform-origin: left center;
+  animation: previewBar var(--preview, 2000ms) linear forwards;
+}
+@keyframes previewBar {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+@keyframes previewIn {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+/* Під час показу картки не реагують на наведення */
+.preview-banner ~ #cards-grid .card { cursor: default; }
+
+@media (max-width: 500px) {
+  .rules-notes li { font-size: 0.8rem; }
+  .card-front.key { font-size: 1rem; }
+  .preview-text { font-size: 1.1rem; }
+  .preview-bar { width: 120px; }
+}
+@media (max-width: 400px) {
+  .card-front.key { font-size: 0.85rem; padding: 0 3px 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preview-banner { animation: none; }
+}
