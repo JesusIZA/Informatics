@@ -1932,3 +1932,13 @@ html[data-theme="retro"] .success-icon { animation: none; }
   body { padding-top: 64px; }          /* кнопки 38px + відступ 8px + повітря */
   h1.logo { padding-top: 0; }
 }
+
+/* ===== КАТЕГОРІЯ "ВІКТОРИНИ" ===== */
+.category-title.category-quiz { background: var(--tangerine); }
+.game-card-quiz .game-icon { background: #ffedd5; }
+.game-card-quiz:hover { border-color: var(--tangerine); }
+
+html[data-theme="cosmos"] .category-title.category-quiz { --c: 103, 232, 249; }
+html[data-theme="cosmos"] .game-card-quiz { --c: 103, 232, 249; }
+
+html[data-theme="retro"] .category-title.category-quiz { background: #00e5ff; }

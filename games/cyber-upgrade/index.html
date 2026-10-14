@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Upgrade | Ігри-тренажери</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23667eea'/%3E%3Cstop offset='100%25' stop-color='%23f093fb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23g)'/%3E%3Ctext x='50' y='72' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EI%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="matrix">
+    <span>10110101</span>
+    <span>01101001</span>
+    <span>11010110</span>
+    <span>00101101</span>
+    <span>10011010</span>
+    <span>01110100</span>
+    <span>11001011</span>
+    <span>00110110</span>
+    <span>10101001</span>
+    <span>01011010</span>
+  </div>
+
+  <div class="shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+    <div class="shape shape-6"></div>
+  </div>
+
+  <div class="game-container">
+    <!-- Меню -->
+    <div id="menu-screen" class="screen active">
+      <div class="menu-content">
+        <div class="game-emoji">🤖</div>
+        <h1>Cyber Upgrade</h1>
+        <p class="menu-subtitle">Відповідай правильно, збирай очки і прокачуй свого робота</p>
+
+        <div class="name-section">
+          <label for="player-name">Твоє ім'я або нікнейм</label>
+          <input type="text" id="player-name" placeholder="Напиши тут" maxlength="20" autocomplete="off">
+          <div class="name-error" id="name-error"></div>
+          <div class="name-hint">Ім'я має бути унікальним. Якщо твоє вже зайняте, додай літеру прізвища або клас</div>
+        </div>
+
+        <button class="start-btn" id="start-btn">🚀 Старт</button>
+
+        <div class="top3-section">
+          <h3>🏆 Топ-3 гравців</h3>
+          <ol class="board" id="top3-list"></ol>
+          <div class="top3-note" id="top3-note"></div>
+        </div>
+
+        <button class="secondary-btn" id="board-btn">📋 Топ-100</button>
+
+        <a href="../../games.html" class="menu-back-btn">← Назад до ігор</a>
+      </div>
+    </div>
+
+    <!-- Гра -->
+    <div id="game-screen" class="screen">
+      <div class="game-hud">
+        <div class="hud-item hud-score">
+          <span class="label">Очки</span>
+          <span class="value" id="score">0</span>
+        </div>
+        <div class="hud-item hud-progress">
+          <span class="label">Питання</span>
+          <span class="value" id="progress">1/50</span>
+        </div>
+        <div class="hud-item">
+          <span class="label">Життя</span>
+          <div class="hud-lives" id="lives">
+            <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
+          </div>
+        </div>
+        <div class="hud-item hud-streak" id="streak"></div>
+        <button class="pause-btn" id="quit-btn">🚪 Вийти</button>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card" id="question-card">
+          <div class="q-pic" id="q-pic">💻</div>
+          <div class="q-text" id="q-text"></div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Результат -->
+    <div id="result-screen" class="screen">
+      <div class="result-content">
+        <div class="result-emoji" id="result-emoji">💥</div>
+        <h2 id="result-title">Життя закінчились</h2>
+        <div class="final-score" id="final-score">0</div>
+        <div class="final-score-label">очок</div>
+        <div class="new-record" id="new-record" style="display: none;">🏆 Новий рекорд!</div>
+
+        <div class="upgrade-box">
+          <div class="upgrade-label">Кібер апгрейд</div>
+          <div class="upgrade-robot" id="upgrade-robot">🤖</div>
+          <div class="upgrade-title" id="upgrade-title">Новачок</div>
+          <div class="upgrade-part" id="upgrade-part"></div>
+          <div class="upgrade-next" id="upgrade-next"></div>
+        </div>
+
+        <div class="result-stats">
+          <div class="stat-item">
+            <div class="stat-value" id="stat-correct">0</div>
+            <div class="stat-label">правильних</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-answered">0</div>
+            <div class="stat-label">відповідей</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-best">0</div>
+            <div class="stat-label">твій рекорд</div>
+          </div>
+        </div>
+
+        <div class="submit-status" id="submit-status"></div>
+
+        <div class="result-buttons">
+          <button class="result-btn play-again" id="play-again-btn">⚡ Кібер апгрейд і ще раз</button>
+          <button class="result-btn secondary" id="result-board-btn">📋 Топ-100</button>
+          <button class="result-btn secondary" id="back-menu-btn">📋 До меню</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Топ-100 -->
+  <div class="board-overlay" id="board-overlay">
+    <div class="board-panel">
+      <h2>🏆 Топ-100</h2>
+      <div class="board-status" id="board-status"></div>
+      <ol class="board" id="board-list"></ol>
+      <button class="secondary-btn" id="board-close">Закрити</button>
+    </div>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="badwords.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

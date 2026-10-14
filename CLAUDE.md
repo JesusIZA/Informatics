@@ -38,6 +38,12 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 ├── theme-init.js                   # Applies saved theme before first paint
 ├── games/
 │   ├── Skhodynky_Setup.exe         # Installer of "Сходинки до інформатики" (downloadable from games.html)
+│   ├── cyber-upgrade/              # "Cyber Upgrade" quiz (primary school)
+│   │   ├── index.html
+│   │   ├── styles.css
+│   │   ├── script.js
+│   │   ├── questions.js            # 50 questions
+│   │   └── badwords.js             # profanity filter for player names
 │   ├── mouse-click/                # "Лопни кульку" game
 │   │   ├── index.html
 │   │   ├── styles.css
@@ -59,7 +65,10 @@ To view/test changes, open `index.html` directly in a web browser. No build, com
 │       ├── styles.css
 │       └── script.js
 ├── docs/
-│   └── project-analytics.md        # Project analytics and statistics
+│   ├── project-analytics.md        # Project analytics and statistics
+│   ├── cyber-upgrade-questions.md  # Question bank (editable source)
+│   ├── cyber-upgrade-leaderboard.gs # Apps Script for the Google Sheet leaderboard
+│   └── cyber-upgrade-leaderboard.md # Teacher setup guide for the leaderboard
 ├── CLAUDE.md                       # AI assistant guide
 └── README.md                       # Project documentation (Ukrainian)
 ```
@@ -102,6 +111,17 @@ Contains all CSS styles organized in sections:
 - External card (`.game-card-external`) downloads the "Сходинки до інформатики" game installer, hosted in the repo itself as `games/Skhodynky_Setup.exe` (~33 MB, served by GitHub Pages; bare `download` attribute, the saved file keeps the Latin name on purpose). The installer is unsigned, so Windows SmartScreen shows "Windows protected your PC" on first run — that cannot be fixed from the website, only by code-signing the installer. Google Drive hosting was abandoned: for signed-in users Drive always shows a slow "couldn't scan for viruses / download anyway" interstitial for .exe files, even with `confirm=t`
 
 ## Games
+
+### Cyber Upgrade (`games/cyber-upgrade/`) — quiz for primary school
+- Files: `index.html`, `styles.css`, `script.js`, `questions.js` (50 questions as `window.CYBER_QUESTIONS`, each `{pic, text, options[3], answer}`; human-readable source in `docs/cyber-upgrade-questions.md`), `badwords.js` (profanity filter → `window.isBadName(name)`)
+- Profanity filter: root-based, Ukrainian/Russian + English lists; the name is normalized first (lowercase, non-letters stripped, leet digits mapped 0→о 1→і 3→з 4→ч 5→s 6→б 9→я @→а $→s, Latin↔Cyrillic look-alikes mapped both ways, repeated letters squeezed) so "х у й", "xyй", "бл9дь", "Суууука", "sh1t" are caught. Same code is duplicated in the Apps Script (`isBadName` in `docs/cyber-upgrade-leaderboard.gs`, `submit` answers `error:'bad-word'`) so the API can't be bypassed — keep both lists in sync. Known trade-off: substring matching can hit rare surnames containing a root (e.g. "Сукайло"); "dick"/"cock"/"хер"/"манда"/"сук" were deliberately left out to avoid real names (Dick, Херсон, Аманда). Game rejects with "Таке ім'я не підходить. Обери інше".
+- Flow: enter name (2-20 chars, sanitized, unique, kept only for the tab session) → Start → questions in random order (shuffled every run) → 3 lives → result screen with "Кібер апгрейд" tier (robot emoji grows with score: 0/50/120/220/350) → play again
+- Scoring: +10 per correct, +5 extra on every 3rd correct in a row; keys 1/2/3 answer; wrong answer shows the correct option and costs a life
+- Records: local best per name in `localStorage["cyberUpgradeRecords"]` (top 100) — always; plus optional Google Sheet via Apps Script when `LEADERBOARD_URL` in `script.js` is set. Transport is JSONP (`?action=top|submit&callback=`) so it works from GitHub Pages and `file://`. Menu shows top-3 and a "Топ-100" overlay (scrollable; the sheet script ranks ALL rows by best score per name and returns the first 100); while the sheet is loading the lists show a "Завантажую…" row, never the empty-state text; the sheet wins over local when reachable, local is the fallback. Because a fresh `appendRow` can lag behind the next read by a few seconds, `fetchTop()` merges local records into the remote list (`mergeRecords`, best score per name) so a player always sees their own result right away. The sheet is connected (URL set 2026-10-14); its script source in `docs/` now includes `SpreadsheetApp.flush()` — the teacher's deployed copy predates that line, so a redeploy is optional.
+- Apps Script source: `docs/cyber-upgrade-leaderboard.gs` (v1.1); setup steps for the teacher: `docs/cyber-upgrade-leaderboard.md`. Sheet layout is the teacher's live one: columns Час | Нік | Бали, header row required, one row per run; `action=top&limit=N` ranks ALL rows by best score per name (case-insensitive) and returns up to 5000 (v1 capped at 100 — the teacher must redeploy to v1.1 so name checks see every name). `action=submit` appends a row. Validates name length/characters and score ≤ max possible. A "one row per name" v2 variant was tried and dropped; do not reintroduce it.
+- Board cache + refresh policy (user decision 2026-10-14, revised the same day): the record list lives in `board.records` (`loadBoard()`, `FETCH_LIMIT` 5000, merged with local records). It is re-fetched from the sheet on page load, on every return to the menu (`quitToMenu` → `refreshTop3`), on opening Топ-100, before every name check and after a score submit — the user wants fresh records everywhere. While a refresh is in flight the previous list stays visible with an "Оновлюю…" note (no "Завантажую…"/empty flash); "Завантажую…" appears only when there is no cache yet. Verified: exactly one JSONP call per action.
+- Name uniqueness (user requirement 2026-10-14): a name is bound to the browser TAB session. `requestStart()` → `checkName()` searches the cached board (sheet + local); a taken name is rejected with "уже зайняте, обери інше" — there is NO "this is me" confirm (that variant was built and rejected). On the first start with a name in a session, `reserveName()` immediately writes that name with score 0 to the sheet (fire-and-forget `submitScore`) and to local records, so nobody else can take it while the round is in progress; the real score submitted at the end simply outranks the 0. The chosen name is kept in `sessionStorage["cyberUpgradeSessionName"]`, so "play again" / back-to-menu within the same tab reuse it without re-checking; closing the tab clears it and the next player must pick a free name. Nothing about the name goes to `localStorage`.
+- Listed on games.html under the category "Вікторини" (`.category-quiz`, `.game-card-quiz`, colors per theme in `styles.css`); the name is deliberately age-neutral (user rejected "Для початкової школи")
 
 ### Mouse Click Game (`games/mouse-click/`)
 - Pop balloons by clicking them
