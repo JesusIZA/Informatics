@@ -219,6 +219,8 @@ class Target {
       zoneIndex = 0;
     }
 
+    GameKit.play(zone === 'bullseye' || this.type === 'golden' ? 'bonus' : 'pop');
+
     // Calculate points
     const basePoints = POINTS[this.type][zoneIndex];
     const points = basePoints * gameState.multiplier;
@@ -546,6 +548,7 @@ function updateComboDisplay() {
 }
 
 function loseLife() {
+  GameKit.play('life');
   gameState.lives--;
   updateLivesDisplay();
 
@@ -651,3 +654,6 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INITIALIZATION =====
 loadRecords();
+
+// ===== GAME KIT: відлік 3-2-1 перед стартом (games/common/game-kit.js) =====
+startGame = GameKit.withCountdown(startGame);

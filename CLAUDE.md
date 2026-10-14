@@ -218,6 +218,13 @@ Contains all CSS styles organized in sections:
 - `h1.rules-title` - smaller title with more bottom margin
 - `.game-card.coming-soon` - disabled game card with "Скоро" badge
 
+## Shared game kit (`games/common/game-kit.js` + `game-kit.css`)
+Loaded by the six trainer games (not by Cyber Upgrade yet). Provides:
+- `GameKit.play(name)` — Web Audio synthesized SFX, no audio files: `pop`, `flip`, `good`, `bonus`, `bad`, `life`, `tick`, `go`, `end`, `record`. A fixed 🔊/🔇 button (top-right, `.sound-toggle`) persists the choice in `localStorage["gameSound"]`. The AudioContext is created on the first pointer/key event (autoplay policy).
+- `GameKit.countdown()` → Promise: full-screen «3 · 2 · 1 · Старт!» overlay with ticks. Each game ends its script with `startGame = GameKit.withCountdown(startGame);` — the function binding is reassigned, so every caller (difficulty buttons, "play again") gets the countdown without touching the original `startGame`.
+- Unified result screen: a MutationObserver on `#result-screen` fires when it becomes active — if `#new-record` is visible it adds `.celebrate` (pop + glow animation, confetti burst) and plays `record`, otherwise plays `end`. `#new-record` styling now lives in `game-kit.css` for all games.
+- Sound hooks live inside each game's script (`GameKit.play(...)` at pop/hit/correct/wrong/lose-life sites). `loseLife()` plays `life` in every game that has lives.
+
 ## Game Development Patterns
 
 ### Common game structure:

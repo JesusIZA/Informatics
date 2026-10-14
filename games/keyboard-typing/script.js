@@ -328,6 +328,7 @@ class Word {
 
   registerError() {
     this.errors++;
+    GameKit.play('bad');
 
     // Animate error on current letter
     if (this.position < this.text.length) {
@@ -382,6 +383,7 @@ class Word {
 
     gameState.score += points;
     gameState.wordsCompleted++;
+    GameKit.play('good');
     gameState.charsTyped += this.text.length;
     gameState.correctChars += this.text.length;
     updateCombo(true);
@@ -807,6 +809,7 @@ function updateComboDisplay() {
 }
 
 function loseLife() {
+  GameKit.play('life');
   gameState.lives--;
   updateLivesDisplay();
 
@@ -918,3 +921,6 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INITIALIZATION =====
 loadRecords();
+
+// ===== GAME KIT: відлік 3-2-1 перед стартом (games/common/game-kit.js) =====
+startGame = GameKit.withCountdown(startGame);

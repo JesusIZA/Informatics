@@ -136,6 +136,7 @@ class Card {
     if (this.isFlipped || this.isMatched) return;
     this.isFlipped = true;
     this.element.classList.add('flipped');
+    GameKit.play('flip');
   }
 
   unflip() {
@@ -312,6 +313,7 @@ function checkMatch() {
   const isMatch = card1.emoji === card2.emoji;
 
   if (isMatch) {
+    GameKit.play('good');
     // Calculate score
     const now = Date.now();
     const timeSinceLastMatch = now - gameState.lastMatchTime;
@@ -371,6 +373,7 @@ function checkMatch() {
 
     card1.setWrong();
     card2.setWrong();
+    GameKit.play('bad');
 
     gameState.mismatchTimer = setTimeout(() => {
       gameState.mismatchTimer = null;
@@ -514,3 +517,6 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INITIALIZATION =====
 loadRecords();
+
+// ===== GAME KIT: відлік 3-2-1 перед стартом (games/common/game-kit.js) =====
+startGame = GameKit.withCountdown(startGame);

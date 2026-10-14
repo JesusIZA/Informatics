@@ -517,6 +517,7 @@ function processItemDrop(item, zone, isCorrect) {
 
   if (isCorrect) {
     // Correct drop
+    GameKit.play('pop');
     gameState.correctCount++;
     gameState.streak++;
     if (gameState.streak > gameState.bestStreak) {
@@ -574,6 +575,7 @@ function processItemDrop(item, zone, isCorrect) {
   } else {
     // Wrong drop
     gameState.wrongCount++;
+    GameKit.play('bad');
     gameState.streak = 0;
     gameState.multiplier = 1;
 
@@ -713,3 +715,6 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INITIALIZATION =====
 loadRecords();
+
+// ===== GAME KIT: відлік 3-2-1 перед стартом (games/common/game-kit.js) =====
+startGame = GameKit.withCountdown(startGame);

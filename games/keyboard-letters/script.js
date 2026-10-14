@@ -212,6 +212,7 @@ class Letter {
 
     gameState.score += points;
     gameState.correctCount++;
+    GameKit.play(this.type === 'normal' ? 'pop' : 'bonus');
     updateCombo(true);
     updateHUD();
 
@@ -431,6 +432,7 @@ function handleWrongKey(key) {
   const config = DIFFICULTY[gameState.difficulty];
   if (config.chars.includes(key)) {
     gameState.wrongCount++;
+    GameKit.play('bad');
     updateCombo(false);
 
     // Shake all letters briefly
@@ -522,6 +524,7 @@ function updateComboDisplay() {
 }
 
 function loseLife() {
+  GameKit.play('life');
   gameState.lives--;
   updateLivesDisplay();
 
@@ -625,3 +628,6 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INITIALIZATION =====
 loadRecords();
+
+// ===== GAME KIT: відлік 3-2-1 перед стартом (games/common/game-kit.js) =====
+startGame = GameKit.withCountdown(startGame);

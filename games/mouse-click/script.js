@@ -216,6 +216,7 @@ class Balloon {
       gameState.score += points;
       updateHUD();
     }
+    if (this.type !== 'bomb') GameKit.play(this.type === 'normal' ? 'pop' : 'bonus');
 
     showScorePopup(this.x + this.size / 2, this.y, popupText, popupClass);
 
@@ -407,6 +408,7 @@ function updateLivesDisplay() {
 }
 
 function loseLife() {
+  GameKit.play('life');
   gameState.lives--;
   updateLivesDisplay();
 
@@ -507,3 +509,6 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INITIALIZATION =====
 loadRecords();
+
+// ===== GAME KIT: відлік 3-2-1 перед стартом (games/common/game-kit.js) =====
+startGame = GameKit.withCountdown(startGame);
